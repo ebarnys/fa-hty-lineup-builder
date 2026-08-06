@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink: #0a0a0b;
+  --color-panel: #141417;
+  --color-panel-2: #1c1c21;
+  --color-line: #2a2a30;
+  --color-gold: #f5c518;
+  --color-gold-soft: #d4af37;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: #f4f4f5;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Jemný přechod pozadí pro sportovní vzhled. */
+body {
+  background-image:
+    radial-gradient(60rem 40rem at 80% -10%, rgba(245, 197, 24, 0.08), transparent),
+    radial-gradient(50rem 30rem at 0% 0%, rgba(245, 197, 24, 0.05), transparent);
+  background-attachment: fixed;
+}
+
+/* Vlastní posuvník. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #33333a;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #44444d;
+}
+
+/* Zamezí scrollování při drag & drop na dotykových zařízeních. */
+.no-touch-action {
+  touch-action: none;
 }

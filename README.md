@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FA Horšovský Týn – Lineup Builder
 
-## Getting Started
+Jednoduchá webová aplikace pro **osobní** evidenci hráčů a skládání fotbalové
+sestavy na další zápas. Bez přihlašování, bez databáze, bez placených služeb –
+všechna data zůstávají uložená lokálně v prohlížeči (localStorage).
 
-First, run the development server:
+## Spuštění
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Poté otevři [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Produkční build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Použité technologie
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 16** (App Router) + **React 19**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **@dnd-kit** – drag & drop (funguje na desktopu i dotykových zařízeních)
+- **html-to-image** – export sestavy do PNG
+- Ukládání dat výhradně přes **localStorage** (žádný backend)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Funkce
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Přehled (`/`)
+Rychlý souhrn kádru, dostupnosti a posledních sestav.
 
-## Deploy on Vercel
+### Hráči (`/players`)
+- Přidávání, úprava a mazání hráčů.
+- Evidence: jméno, příjmení, přezdívka, rok narození, hlavní a vedlejší pozice,
+  preferovaná noha (pravá / levá / obě), číslo dresu, poznámka a dostupnost
+  (dostupný / nejistý / nedostupný / zraněný).
+- Filtrování podle pozice, dostupnosti a preferované nohy + vyhledávání podle jména.
+- Základní validace formuláře.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Sestava (`/lineup`)
+- Grafické fotbalové hřiště, vedle něj seznam hráčů „mimo nominaci".
+- **Drag & drop**: ze seznamu na hřiště, mezi pozicemi na hřišti, na lavičku i
+  zpět do seznamu. Hráče lze na hřišti umístit **libovolně** (volné pozice).
+- Maximálně 11 hráčů na hřišti.
+- Sekce **Náhradníci** pod hřištěm.
+- Volba **rozestavení** (4-4-2, 4-3-3, 4-2-3-1, 4-1-4-1, 3-5-2, 3-4-3, 5-3-2 a
+  vlastní). Při změně rozestavení se zachovají již vložení hráči a upraví se jen
+  jejich pozice. Tlačítko **Doplnit** automaticky obsadí volné pozice podle
+  pozic hráčů.
+- Detail zápasu: soupeř, datum, čas, místo, domácí/venkovní, kapitán (značka
+  **C**), brankář (zeleně zvýrazněný) a poznámka.
+- **Kontroly** (nebrání uložení, jen upozorňují): více než 11 hráčů, chybějící
+  brankář, nedostupný/zraněný hráč v sestavě, hráč na více místech, neobsazené
+  pozice.
+- **Exportovat PNG** – stáhne obrázek sestavy (hřiště, hráči, náhradníci, soupeř,
+  datum, rozestavení a logo/název klubu).
+- Rozpracovaná sestava se průběžně ukládá, takže přežije obnovení stránky.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Uložené sestavy (`/lineups`)
+Uložení pod vlastním názvem, vytvoření nové, duplikování, úprava, mazání a
+načtení sestavy zpět do editoru.
+
+### Data (`/settings`)
+- **Export** všech dat do JSON souboru (záloha).
+- **Import** dat zpět z JSON souboru.
+- Obnovení ukázkových **demo dat** nebo smazání všech dat.
+
+## Demo data
+
+Při prvním spuštění se automaticky vytvoří ukázkový kádr (14 hráčů), aby byla
+aplikace ihned použitelná. Demo data lze kdykoliv obnovit nebo smazat v sekci
+**Data**.
+
+## Struktura projektu
+
+```
+src/
+  app/                     # stránky (App Router)
+    page.tsx               # přehled / dashboard
+    players/page.tsx       # hráči
+    lineup/page.tsx        # editor sestavy
+    lineups/page.tsx       # uložené sestavy
+    settings/page.tsx      # data / export
+  components/
+    ui/                    # sdílené prvky (Button, Input, Modal, …)
+    players/               # karta a formulář hráče
+    lineup/                # hřiště, kartičky, drag & drop, detail zápasu
+    Navbar.tsx, Logo.tsx
+  lib/
+    types.ts               # TypeScript datové modely
+    positions.ts           # pozice, nohy, dostupnost
+    formations.ts          # rozestavení a jejich souřadnice
+    lineupOps.ts           # operace nad sestavou (umístění, rozestavení, autofill)
+    validation.ts          # kontroly sestavy
+    storage.ts             # localStorage, export/import JSON
+    store.tsx              # React context se stavem aplikace
+    demoData.ts            # ukázkoví hráči
+    exportImage.ts         # export do PNG
+    players.ts, id.ts      # pomocné funkce
+```
+
+## Poznámky
+
+- Aplikace je čistě klientská; není potřeba žádný server ani API.
+- Data se ukládají pod klíčem `fa-hty-lineup-builder` v `localStorage`
+  prohlížeče. Vymazáním dat prohlížeče se sestavy i hráči ztratí – pro zálohu
+  použij export do JSON.
