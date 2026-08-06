@@ -23,8 +23,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="border-t border-line/60 text-center text-xs text-zinc-500 py-4">
-            FA Horšovský Týn · osobní nástroj pro sestavy · data uložena lokálně
-            v prohlížeči
+            FA Horšovský Týn · nástroj pro skládání sestav
           </footer>
         </StoreProvider>
       </body>

@@ -59,14 +59,46 @@ export function newLineup(partial: Partial<Lineup> = {}): Lineup {
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<AppData>(() => emptyData(false));
   const [ready, setReady] = useState(false);
+  // serverMode = data se synchronizují do sdíleného úložiště přes /api/data.
+  const [serverMode, setServerMode] = useState(false);
   const firstLoad = useRef(true);
 
-  // Načtení z localStorage až na klientu (kvůli SSR) – záměrná hydratace po mountu.
+  // Načtení dat: nejdřív zkusíme sdílené úložiště (API), jinak localStorage.
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setData(loadData());
-    setReady(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/data", { cache: "no-store" });
+        const json = await res.json();
+        if (!cancelled && json?.configured) {
+          if (json.data) {
+            setData(json.data as AppData);
+          } else {
+            // První spuštění se sdíleným úložištěm – naplníme demo daty.
+            const seeded = emptyData(true);
+            setData(seeded);
+            void fetch("/api/data", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(seeded),
+            });
+          }
+          setServerMode(true);
+          setReady(true);
+          return;
+        }
+      } catch {
+        // API nedostupné → spadneme do lokálního režimu níže.
+      }
+      if (!cancelled) {
+        setServerMode(false);
+        setData(loadData());
+        setReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Perzistence při každé změně (kromě úvodního načtení).
@@ -76,8 +108,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       firstLoad.current = false;
       return;
     }
+    // Lokální kopie (rychlý start / offline).
     saveData(data);
-  }, [data, ready]);
+    if (!serverMode) return;
+    // Uložení do sdíleného úložiště (s krátkým zpožděním kvůli dávkování).
+    const id = window.setTimeout(() => {
+      void fetch("/api/data", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    }, 500);
+    return () => window.clearTimeout(id);
+  }, [data, ready, serverMode]);
 
   const addPlayer = useCallback((p: Omit<Player, "id">) => {
     const player: Player = { ...p, id: newId("pl") };
