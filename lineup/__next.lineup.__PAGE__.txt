@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:"$Sreact.suspense"
+3:I[55122,["/fa-hty-lineup-builder/_next/static/chunks/3tm2zdbg1-pss.js","/fa-hty-lineup-builder/_next/static/chunks/14mrh2-p_w84d.js","/fa-hty-lineup-builder/_next/static/chunks/1lbdavoke41yj.js","/fa-hty-lineup-builder/_next/static/chunks/17n9oy-9yc5bx.js"],"LineupEditor"]
+4:I[97367,["/fa-hty-lineup-builder/_next/static/chunks/3tm2zdbg1-pss.js","/fa-hty-lineup-builder/_next/static/chunks/14mrh2-p_w84d.js"],"OutletBoundary"]
+0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"space-y-5","children":[["$","div",null,{"children":[["$","h1",null,{"className":"text-2xl font-extrabold tracking-tight","children":"Sestava"}],["$","p",null,{"className":"text-sm text-zinc-400","children":"Poskládej sestavu na další zápas přetahováním hráčů."}]]}],["$","$2",null,{"fallback":["$","div",null,{"className":"py-20 text-center text-zinc-500","children":"Načítám…"}],"children":["$","$L3",null,{}]}]]}],[["$","script","script-0",{"src":"/fa-hty-lineup-builder/_next/static/chunks/1lbdavoke41yj.js","async":true}],["$","script","script-1",{"src":"/fa-hty-lineup-builder/_next/static/chunks/17n9oy-9yc5bx.js","async":true}]],["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"xHKMD0Ah3NqZmy-9ec9X1"}
+5:null
