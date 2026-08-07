@@ -1,14 +1,23 @@
 import type { Formation, FormationSlot, PositionCode } from "./types";
 
+// Role, které patří k postranní čáře (křídla, krajní obránci).
+const WIDE_ROLES = new Set<PositionCode>(["LW", "RW", "LB", "RB"]);
+
 /**
- * Rozmístí `n` hráčů do vodorovné linie na dané výšce `y`.
- * Role se přiřazují popořadě zleva doprava.
+ * Rozmístí `n` hráčů do vodorovné linie na dané výšce `y` (role zleva doprava).
+ *
+ * Šířka řady závisí na rolích: pokud jsou na krajích křídla/krajní bekové,
+ * řada se roztáhne až k postranním čarám (12–88). Pokud jsou na krajích
+ * středové role (dva útočníci, dvojice defenzivních záložníků, trojice
+ * stoperů…), řada se drží víc u středu, aby útočník na středu měl opravdu
+ * roli útočníka, ne krajního záložníka.
  */
 function line(y: number, roles: PositionCode[]): FormationSlot[] {
   const n = roles.length;
   if (n === 1) return [{ role: roles[0], x: 50, y }];
-  const left = 12;
-  const right = 88;
+  const outerWide = WIDE_ROLES.has(roles[0]) || WIDE_ROLES.has(roles[n - 1]);
+  const left = outerWide ? 12 : n >= 4 ? 20 : n === 3 ? 26 : 34;
+  const right = 100 - left;
   const step = (right - left) / (n - 1);
   return roles.map((role, i) => ({ role, x: left + i * step, y }));
 }
