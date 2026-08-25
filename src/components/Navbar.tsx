@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/players", label: "Hráči" },
   { href: "/lineup", label: "Sestava" },
   { href: "/lineups", label: "Uložené sestavy" },
+  { href: "/pokuty", label: "Pokuty" },
   { href: "/settings", label: "Data" },
 ];
 

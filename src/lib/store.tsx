@@ -12,7 +12,13 @@ import {
 import { DEFAULT_FORMATION_ID } from "./formations";
 import { newId } from "./id";
 import { emptyData, loadData, saveData } from "./storage";
-import type { AppData, Lineup, Player } from "./types";
+import type {
+  AppData,
+  FineEntry,
+  FineType,
+  Lineup,
+  Player,
+} from "./types";
 
 interface StoreValue {
   data: AppData;
@@ -26,6 +32,14 @@ interface StoreValue {
   createLineup: (partial?: Partial<Lineup>) => Lineup;
   duplicateLineup: (id: string) => Lineup | null;
   removeLineup: (id: string) => void;
+  // Pokuty
+  addFine: (f: Omit<FineEntry, "id" | "createdAt">) => void;
+  updateFine: (id: string, patch: Partial<FineEntry>) => void;
+  removeFine: (id: string) => void;
+  // Sazebník pokut
+  addFineType: (t: Omit<FineType, "id">) => void;
+  updateFineType: (id: string, patch: Partial<FineType>) => void;
+  removeFineType: (id: string) => void;
   // Data celkově
   replaceData: (d: AppData) => void;
   resetDemo: () => void;
@@ -147,6 +161,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         captainId: l.captainId === id ? null : l.captainId,
         goalkeeperId: l.goalkeeperId === id ? null : l.goalkeeperId,
       })),
+      // …a smažeme jeho pokuty.
+      fines: d.fines.filter((f) => f.playerId !== id),
     }));
   }, []);
 
@@ -191,6 +207,48 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  // --- Pokuty ---
+  const addFine = useCallback((f: Omit<FineEntry, "id" | "createdAt">) => {
+    const entry: FineEntry = { ...f, id: newId("fn"), createdAt: Date.now() };
+    setData((d) => ({ ...d, fines: [...d.fines, entry] }));
+  }, []);
+
+  const updateFine = useCallback((id: string, patch: Partial<FineEntry>) => {
+    setData((d) => ({
+      ...d,
+      fines: d.fines.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+    }));
+  }, []);
+
+  const removeFine = useCallback((id: string) => {
+    setData((d) => ({ ...d, fines: d.fines.filter((f) => f.id !== id) }));
+  }, []);
+
+  // --- Sazebník pokut ---
+  const addFineType = useCallback((t: Omit<FineType, "id">) => {
+    const ft: FineType = { ...t, id: newId("ft") };
+    setData((d) => ({ ...d, fineTypes: [...d.fineTypes, ft] }));
+  }, []);
+
+  const updateFineType = useCallback(
+    (id: string, patch: Partial<FineType>) => {
+      setData((d) => ({
+        ...d,
+        fineTypes: d.fineTypes.map((t) =>
+          t.id === id ? { ...t, ...patch } : t
+        ),
+      }));
+    },
+    []
+  );
+
+  const removeFineType = useCallback((id: string) => {
+    setData((d) => ({
+      ...d,
+      fineTypes: d.fineTypes.filter((t) => t.id !== id),
+    }));
+  }, []);
+
   const replaceData = useCallback((d: AppData) => setData(d), []);
   const resetDemo = useCallback(() => setData(emptyData(true)), []);
   const clearAll = useCallback(() => setData(emptyData(false)), []);
@@ -206,6 +264,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       createLineup,
       duplicateLineup,
       removeLineup,
+      addFine,
+      updateFine,
+      removeFine,
+      addFineType,
+      updateFineType,
+      removeFineType,
       replaceData,
       resetDemo,
       clearAll,
@@ -220,6 +284,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       createLineup,
       duplicateLineup,
       removeLineup,
+      addFine,
+      updateFine,
+      removeFine,
+      addFineType,
+      updateFineType,
+      removeFineType,
       replaceData,
       resetDemo,
       clearAll,

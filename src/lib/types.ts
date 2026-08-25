@@ -76,9 +76,32 @@ export interface Lineup {
   updatedAt: number;
 }
 
+/** Položka sazebníku pokut (druh pokuty a její výše v Kč). */
+export interface FineType {
+  id: string;
+  label: string;
+  amount: number;
+}
+
+/** Jeden záznam udělené pokuty konkrétnímu hráči. */
+export interface FineEntry {
+  id: string;
+  playerId: string;
+  /** Snímek názvu a částky v době udělení (aby pozdější úprava sazebníku
+   *  nezměnila historické záznamy). */
+  label: string;
+  amount: number;
+  date: string; // YYYY-MM-DD
+  paid: boolean;
+  note: string;
+  createdAt: number;
+}
+
 /** Struktura celého perzistentního úložiště. */
 export interface AppData {
   players: Player[];
   lineups: Lineup[];
+  fineTypes: FineType[];
+  fines: FineEntry[];
   version: number;
 }

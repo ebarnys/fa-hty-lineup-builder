@@ -1,5 +1,6 @@
 import { createDemoPlayers } from "./demoData";
-import type { AppData, Lineup, Player } from "./types";
+import { defaultFineTypes } from "./fines";
+import type { AppData, FineEntry, FineType, Lineup, Player } from "./types";
 
 const STORAGE_KEY = "fa-hty-lineup-builder";
 const CURRENT_VERSION = 1;
@@ -8,6 +9,9 @@ export function emptyData(withDemo = true): AppData {
   return {
     players: withDemo ? createDemoPlayers() : [],
     lineups: [],
+    // Sazebník pokut je výchozí konfigurace, seedujeme ho vždy.
+    fineTypes: defaultFineTypes(),
+    fines: [],
     version: CURRENT_VERSION,
   };
 }
@@ -47,7 +51,36 @@ export function normalize(input: Partial<AppData>): AppData {
   const lineups: Lineup[] = Array.isArray(input.lineups)
     ? input.lineups.map(sanitizeLineup)
     : [];
-  return { players, lineups, version: CURRENT_VERSION };
+  // Sazebník: pokud chybí (starší data), doplníme výchozí; prázdné pole
+  // (uživatel si vše smazal) respektujeme.
+  const fineTypes: FineType[] = Array.isArray(input.fineTypes)
+    ? input.fineTypes.map(sanitizeFineType)
+    : defaultFineTypes();
+  const fines: FineEntry[] = Array.isArray(input.fines)
+    ? input.fines.map(sanitizeFineEntry)
+    : [];
+  return { players, lineups, fineTypes, fines, version: CURRENT_VERSION };
+}
+
+function sanitizeFineType(t: Partial<FineType>): FineType {
+  return {
+    id: String(t.id ?? ""),
+    label: String(t.label ?? "Pokuta"),
+    amount: typeof t.amount === "number" ? t.amount : 0,
+  };
+}
+
+function sanitizeFineEntry(f: Partial<FineEntry>): FineEntry {
+  return {
+    id: String(f.id ?? ""),
+    playerId: String(f.playerId ?? ""),
+    label: String(f.label ?? "Pokuta"),
+    amount: typeof f.amount === "number" ? f.amount : 0,
+    date: String(f.date ?? ""),
+    paid: Boolean(f.paid),
+    note: String(f.note ?? ""),
+    createdAt: typeof f.createdAt === "number" ? f.createdAt : Date.now(),
+  };
 }
 
 function sanitizePlayer(p: Partial<Player>): Player {
