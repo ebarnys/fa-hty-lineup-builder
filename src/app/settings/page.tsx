@@ -5,6 +5,7 @@ import { useStore } from "@/lib/store";
 import { Button, Card } from "@/components/ui/Ui";
 import { Modal } from "@/components/ui/Modal";
 import { exportToFile, importFromFile } from "@/lib/storage";
+import { AdminOnly } from "@/components/AdminOnly";
 
 export default function SettingsPage() {
   const { data, ready, replaceData, resetDemo, clearAll } = useStore();
@@ -35,6 +36,7 @@ export default function SettingsPage() {
   };
 
   return (
+    <AdminOnly>
     <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="text-2xl font-extrabold tracking-tight">Data a nastavení</h1>
@@ -145,5 +147,6 @@ export default function SettingsPage() {
         </div>
       </Modal>
     </div>
+    </AdminOnly>
   );
 }

@@ -10,7 +10,7 @@ type Filter = "all" | "unpaid" | "paid";
 
 /** Chronologický záznam všech udělených pokut. */
 export function FinesLog() {
-  const { data, updateFine, removeFine } = useStore();
+  const { data, updateFine, removeFine, isAdmin } = useStore();
   const [filter, setFilter] = useState<Filter>("all");
 
   const rows = useMemo(() => {
@@ -92,35 +92,49 @@ export function FinesLog() {
                       {formatKc(f.amount)}
                     </td>
                     <td className="py-2 pr-3 text-center">
-                      <button
-                        onClick={() => updateFine(f.id, { paid: !f.paid })}
-                        className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-colors ${
-                          f.paid
-                            ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
-                            : "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                        }`}
-                        title="Přepnout zaplaceno / dluží"
-                      >
-                        {f.paid ? "zaplaceno" : "dluží"}
-                      </button>
+                      {isAdmin ? (
+                        <button
+                          onClick={() => updateFine(f.id, { paid: !f.paid })}
+                          className={`px-2 py-0.5 rounded-md text-xs font-medium border transition-colors ${
+                            f.paid
+                              ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                              : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                          }`}
+                          title="Přepnout zaplaceno / dluží"
+                        >
+                          {f.paid ? "zaplaceno" : "dluží"}
+                        </button>
+                      ) : (
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-xs font-medium border ${
+                            f.paid
+                              ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                              : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                          }`}
+                        >
+                          {f.paid ? "zaplaceno" : "dluží"}
+                        </span>
+                      )}
                     </td>
-                    <td className="py-2 text-right">
-                      <button
-                        onClick={() => removeFine(f.id)}
-                        className="text-zinc-500 hover:text-red-400 p-1"
-                        aria-label="Smazat"
-                        title="Smazat"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M6 6l12 12M18 6L6 18"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </button>
-                    </td>
+                    {isAdmin && (
+                      <td className="py-2 text-right">
+                        <button
+                          onClick={() => removeFine(f.id)}
+                          className="text-zinc-500 hover:text-red-400 p-1"
+                          aria-label="Smazat"
+                          title="Smazat"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M6 6l12 12M18 6L6 18"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}

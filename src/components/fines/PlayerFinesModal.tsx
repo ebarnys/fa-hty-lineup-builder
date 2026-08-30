@@ -20,7 +20,7 @@ export function PlayerFinesModal({
   player: Player;
   onClose: () => void;
 }) {
-  const { data, addFine, updateFine, removeFine } = useStore();
+  const { data, addFine, updateFine, removeFine, isAdmin } = useStore();
   const [date, setDate] = useState(today());
   const [note, setNote] = useState("");
 
@@ -54,7 +54,8 @@ export function PlayerFinesModal({
         <SummaryTile label="Dluh" value={formatKc(summary.owed)} tone={summary.owed > 0 ? "bad" : "ok"} />
       </div>
 
-      {/* Přidání pokuty ze sazebníku */}
+      {/* Přidání pokuty ze sazebníku – jen admin */}
+      {isAdmin && (
       <div className="rounded-xl border border-line bg-panel-2 p-3 mb-5">
         <div className="flex items-end gap-3 mb-3">
           <div>
@@ -86,6 +87,7 @@ export function PlayerFinesModal({
           </div>
         )}
       </div>
+      )}
 
       {/* Historie */}
       <div>
@@ -101,17 +103,23 @@ export function PlayerFinesModal({
                 key={f.id}
                 className="flex items-center gap-3 rounded-lg border border-line bg-panel-2 px-3 py-2"
               >
-                <label className="flex items-center gap-2 cursor-pointer shrink-0">
-                  <input
-                    type="checkbox"
-                    checked={f.paid}
-                    onChange={(e) => updateFine(f.id, { paid: e.target.checked })}
-                    className="h-4 w-4 accent-emerald-500"
-                  />
-                  <span className={`text-[11px] ${f.paid ? "text-emerald-400" : "text-amber-400"}`}>
+                {isAdmin ? (
+                  <label className="flex items-center gap-2 cursor-pointer shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={f.paid}
+                      onChange={(e) => updateFine(f.id, { paid: e.target.checked })}
+                      className="h-4 w-4 accent-emerald-500"
+                    />
+                    <span className={`text-[11px] ${f.paid ? "text-emerald-400" : "text-amber-400"}`}>
+                      {f.paid ? "zaplaceno" : "dluží"}
+                    </span>
+                  </label>
+                ) : (
+                  <span className={`shrink-0 text-[11px] px-2 py-0.5 rounded-md border ${f.paid ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" : "bg-amber-500/15 text-amber-300 border-amber-500/30"}`}>
                     {f.paid ? "zaplaceno" : "dluží"}
                   </span>
-                </label>
+                )}
                 <div className="min-w-0 flex-1">
                   <div className="text-sm truncate">{f.label}</div>
                   <div className="text-[11px] text-zinc-500">
@@ -122,16 +130,18 @@ export function PlayerFinesModal({
                 <span className={`text-sm font-semibold ${f.paid ? "text-zinc-400 line-through" : "text-zinc-100"}`}>
                   {formatKc(f.amount)}
                 </span>
-                <button
-                  onClick={() => removeFine(f.id)}
-                  className="shrink-0 text-zinc-500 hover:text-red-400 p-1"
-                  aria-label="Smazat"
-                  title="Smazat"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => removeFine(f.id)}
+                    className="shrink-0 text-zinc-500 hover:text-red-400 p-1"
+                    aria-label="Smazat"
+                    title="Smazat"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
               </div>
             ))}
           </div>

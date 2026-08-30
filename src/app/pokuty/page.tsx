@@ -11,7 +11,7 @@ import { fullName } from "@/lib/players";
 import type { Player } from "@/lib/types";
 
 export default function PokutyPage() {
-  const { data, ready } = useStore();
+  const { data, ready, isAdmin } = useStore();
   const [selected, setSelected] = useState<Player | null>(null);
   const [search, setSearch] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
@@ -132,7 +132,9 @@ export default function PokutyPage() {
                     }}
                   />
                 </div>
-                <div className="mt-2 text-xs text-gold">+ přidat / zobrazit</div>
+                <div className="mt-2 text-xs text-gold">
+                  {isAdmin ? "+ přidat / zobrazit" : "zobrazit"}
+                </div>
               </button>
             ))}
           </div>
@@ -142,7 +144,8 @@ export default function PokutyPage() {
       {/* Záznam pokut */}
       <FinesLog />
 
-      {/* Sazebník (sbalitelný) */}
+      {/* Sazebník (sbalitelný) – úpravy jen admin */}
+      {isAdmin && (
       <section>
         <button
           onClick={() => setShowSchedule((s) => !s)}
@@ -167,6 +170,7 @@ export default function PokutyPage() {
         </button>
         {showSchedule && <FineSchedule />}
       </section>
+      )}
 
       {selected && (
         <PlayerFinesModal

@@ -8,6 +8,7 @@ import { PlayerCard } from "@/components/players/PlayerCard";
 import { PlayerForm, type PlayerDraft } from "@/components/players/PlayerForm";
 import { AVAILABILITIES, FEET, POSITIONS } from "@/lib/positions";
 import { fullName } from "@/lib/players";
+import { AdminOnly } from "@/components/AdminOnly";
 import type { Player } from "@/lib/types";
 
 export default function PlayersPage() {
@@ -76,6 +77,7 @@ export default function PlayersPage() {
     search || posFilter !== "all" || availFilter !== "all" || footFilter !== "all";
 
   return (
+    <AdminOnly>
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -196,5 +198,6 @@ export default function PlayersPage() {
         </div>
       </Modal>
     </div>
+    </AdminOnly>
   );
 }

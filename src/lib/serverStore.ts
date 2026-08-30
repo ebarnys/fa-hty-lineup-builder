@@ -20,6 +20,18 @@ export function isConfigured(): boolean {
   return getRedis() !== null;
 }
 
+/** Je nastavené admin heslo? (Pokud ne, zápis je otevřený – přechodný stav.) */
+export function adminConfigured(): boolean {
+  return !!process.env.ADMIN_PASSWORD;
+}
+
+/** Ověří admin token. Bez nastaveného hesla je zápis povolený (open). */
+export function checkAdmin(token: string | null): boolean {
+  const pw = process.env.ADMIN_PASSWORD;
+  if (!pw) return true;
+  return token === pw;
+}
+
 /** Načte data ze sdíleného úložiště (null = zatím nic uloženo). */
 export async function readData(): Promise<AppData | null> {
   const redis = getRedis();

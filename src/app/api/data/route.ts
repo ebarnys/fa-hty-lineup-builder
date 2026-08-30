@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isConfigured, readData, writeData } from "@/lib/serverStore";
+import { checkAdmin, isConfigured, readData, writeData } from "@/lib/serverStore";
 import { normalize } from "@/lib/storage";
 import type { AppData } from "@/lib/types";
 
@@ -30,6 +30,13 @@ export async function PUT(req: Request) {
     return NextResponse.json(
       { error: "Sdílené úložiště není nakonfigurované." },
       { status: 501 }
+    );
+  }
+  // Zápis smí jen admin (pokud je nastavené heslo).
+  if (!checkAdmin(req.headers.get("x-admin-token"))) {
+    return NextResponse.json(
+      { error: "Bez oprávnění – úpravy může dělat jen admin." },
+      { status: 401 }
     );
   }
   try {

@@ -40,6 +40,10 @@ interface StoreValue {
   addFineType: (t: Omit<FineType, "id">) => void;
   updateFineType: (id: string, patch: Partial<FineType>) => void;
   removeFineType: (id: string) => void;
+  // Přístup
+  isAdmin: boolean;
+  login: (password: string) => Promise<boolean>;
+  logout: () => void;
   // Data celkově
   replaceData: (d: AppData) => void;
   resetDemo: () => void;
@@ -75,7 +79,35 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   // serverMode = data se synchronizují do sdíleného úložiště přes /api/data.
   const [serverMode, setServerMode] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const adminTokenRef = useRef<string | null>(null);
   const firstLoad = useRef(true);
+
+  // Ověření uloženého admin tokenu při startu.
+  useEffect(() => {
+    const stored =
+      typeof window !== "undefined"
+        ? localStorage.getItem("fa-hty-admin")
+        : null;
+    if (!stored) return;
+    (async () => {
+      try {
+        const r = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: stored }),
+        });
+        if (r.ok) {
+          adminTokenRef.current = stored;
+          setIsAdmin(true);
+        } else {
+          localStorage.removeItem("fa-hty-admin");
+        }
+      } catch {
+        /* ignore */
+      }
+    })();
+  }, []);
 
   // Načtení dat: nejdřív zkusíme sdílené úložiště (API), jinak localStorage.
   useEffect(() => {
@@ -124,17 +156,26 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
     // Lokální kopie (rychlý start / offline).
     saveData(data);
-    if (!serverMode) return;
-    // Uložení do sdíleného úložiště (s krátkým zpožděním kvůli dávkování).
+    // Do sdíleného úložiště zapisuje jen admin.
+    if (!serverMode || !isAdmin) return;
     const id = window.setTimeout(() => {
-      void fetch("/api/data", {
+      fetch("/api/data", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": adminTokenRef.current || "",
+        },
         body: JSON.stringify(data),
-      });
+      }).then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem("fa-hty-admin");
+          adminTokenRef.current = null;
+          setIsAdmin(false);
+        }
+      }).catch(() => {});
     }, 500);
     return () => window.clearTimeout(id);
-  }, [data, ready, serverMode]);
+  }, [data, ready, serverMode, isAdmin]);
 
   const addPlayer = useCallback((p: Omit<Player, "id">) => {
     const player: Player = { ...p, id: newId("pl") };
@@ -249,6 +290,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const login = useCallback(async (password: string) => {
+    try {
+      const r = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!r.ok) return false;
+      adminTokenRef.current = password;
+      localStorage.setItem("fa-hty-admin", password);
+      setIsAdmin(true);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    adminTokenRef.current = null;
+    localStorage.removeItem("fa-hty-admin");
+    setIsAdmin(false);
+  }, []);
+
   const replaceData = useCallback((d: AppData) => setData(d), []);
   const resetDemo = useCallback(() => setData(emptyData(true)), []);
   const clearAll = useCallback(() => setData(emptyData(false)), []);
@@ -270,6 +334,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addFineType,
       updateFineType,
       removeFineType,
+      isAdmin,
+      login,
+      logout,
       replaceData,
       resetDemo,
       clearAll,
@@ -290,6 +357,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addFineType,
       updateFineType,
       removeFineType,
+      isAdmin,
+      login,
+      logout,
       replaceData,
       resetDemo,
       clearAll,

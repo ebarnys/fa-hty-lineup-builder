@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { LineupEditor } from "@/components/lineup/LineupEditor";
+import { LineupGate } from "@/components/lineup/LineupGate";
 
 export default function LineupPage() {
   return (
@@ -15,7 +15,7 @@ export default function LineupPage() {
           <div className="py-20 text-center text-zinc-500">Načítám…</div>
         }
       >
-        <LineupEditor />
+        <LineupGate />
       </Suspense>
     </div>
   );

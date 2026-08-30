@@ -7,6 +7,7 @@ import { useStore } from "@/lib/store";
 import { Button, Card } from "@/components/ui/Ui";
 import { Modal } from "@/components/ui/Modal";
 import { getFormation } from "@/lib/formations";
+import { AdminOnly } from "@/components/AdminOnly";
 import type { Lineup } from "@/lib/types";
 
 export default function LineupsPage() {
@@ -22,6 +23,7 @@ export default function LineupsPage() {
   };
 
   return (
+    <AdminOnly>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -126,6 +128,7 @@ export default function LineupsPage() {
         </div>
       </Modal>
     </div>
+    </AdminOnly>
   );
 }
 
