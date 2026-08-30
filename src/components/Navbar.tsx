@@ -14,12 +14,14 @@ const ADMIN_LINKS = [
   { href: "/lineup", label: "Sestava" },
   { href: "/lineups", label: "Uložené sestavy" },
   { href: "/pokuty", label: "Pokuty" },
+  { href: "/sazebnik", label: "Sazebník" },
   { href: "/settings", label: "Data" },
 ];
 const PUBLIC_LINKS = [
   { href: "/", label: "Přehled" },
   { href: "/lineup", label: "Sestava" },
   { href: "/pokuty", label: "Pokuty" },
+  { href: "/sazebnik", label: "Sazebník" },
 ];
 
 export function Navbar() {

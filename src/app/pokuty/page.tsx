@@ -5,7 +5,6 @@ import { useStore } from "@/lib/store";
 import { Card, Input } from "@/components/ui/Ui";
 import { PlayerFinesModal } from "@/components/fines/PlayerFinesModal";
 import { FinesLog } from "@/components/fines/FinesLog";
-import { FineSchedule } from "@/components/fines/FineSchedule";
 import { formatKc, summarizePlayer, summarizeTeam } from "@/lib/fines";
 import { fullName } from "@/lib/players";
 import type { Player } from "@/lib/types";
@@ -14,7 +13,6 @@ export default function PokutyPage() {
   const { data, ready, isAdmin } = useStore();
   const [selected, setSelected] = useState<Player | null>(null);
   const [search, setSearch] = useState("");
-  const [showSchedule, setShowSchedule] = useState(false);
 
   const team = summarizeTeam(data.fines);
 
@@ -143,34 +141,6 @@ export default function PokutyPage() {
 
       {/* Záznam pokut */}
       <FinesLog />
-
-      {/* Sazebník (sbalitelný) – úpravy jen admin */}
-      {isAdmin && (
-      <section>
-        <button
-          onClick={() => setShowSchedule((s) => !s)}
-          className="flex items-center gap-2 text-sm font-medium text-zinc-300 hover:text-gold mb-3"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            className={`transition-transform ${showSchedule ? "rotate-90" : ""}`}
-          >
-            <path
-              d="M9 6l6 6-6 6"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          {showSchedule ? "Skrýt sazebník" : "Upravit sazebník pokut"}
-        </button>
-        {showSchedule && <FineSchedule />}
-      </section>
-      )}
 
       {selected && (
         <PlayerFinesModal
