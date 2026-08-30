@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useStore } from "@/lib/store";
-import { Card, Input } from "@/components/ui/Ui";
+import { Button, Card, Input } from "@/components/ui/Ui";
 import { PlayerFinesModal } from "@/components/fines/PlayerFinesModal";
+import { BulkFineModal } from "@/components/fines/BulkFineModal";
 import { FinesLog } from "@/components/fines/FinesLog";
 import { formatKc, summarizePlayer, summarizeTeam } from "@/lib/fines";
 import { fullName } from "@/lib/players";
@@ -13,6 +14,7 @@ export default function PokutyPage() {
   const { data, ready, isAdmin } = useStore();
   const [selected, setSelected] = useState<Player | null>(null);
   const [search, setSearch] = useState("");
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const team = summarizeTeam(data.fines);
 
@@ -79,12 +81,23 @@ export default function PokutyPage() {
       <section className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">Hráči</h2>
-          <Input
-            placeholder="Hledat hráče…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-64"
-          />
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Input
+              placeholder="Hledat hráče…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 sm:w-64"
+            />
+            {isAdmin && (
+              <Button
+                variant="primary"
+                onClick={() => setBulkOpen(true)}
+                className="shrink-0 whitespace-nowrap"
+              >
+                + Hromadná pokuta
+              </Button>
+            )}
+          </div>
         </div>
 
         {data.players.length === 0 ? (
@@ -148,6 +161,7 @@ export default function PokutyPage() {
           onClose={() => setSelected(null)}
         />
       )}
+      {bulkOpen && <BulkFineModal onClose={() => setBulkOpen(false)} />}
     </div>
   );
 }

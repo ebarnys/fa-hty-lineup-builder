@@ -34,6 +34,7 @@ interface StoreValue {
   removeLineup: (id: string) => void;
   // Pokuty
   addFine: (f: Omit<FineEntry, "id" | "createdAt">) => void;
+  addFines: (list: Omit<FineEntry, "id" | "createdAt">[]) => void;
   updateFine: (id: string, patch: Partial<FineEntry>) => void;
   removeFine: (id: string) => void;
   // Sazebník pokut
@@ -254,6 +255,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setData((d) => ({ ...d, fines: [...d.fines, entry] }));
   }, []);
 
+  const addFines = useCallback(
+    (list: Omit<FineEntry, "id" | "createdAt">[]) => {
+      const now = Date.now();
+      const entries: FineEntry[] = list.map((f, i) => ({
+        ...f,
+        id: newId("fn"),
+        createdAt: now + i,
+      }));
+      setData((d) => ({ ...d, fines: [...d.fines, ...entries] }));
+    },
+    []
+  );
+
   const updateFine = useCallback((id: string, patch: Partial<FineEntry>) => {
     setData((d) => ({
       ...d,
@@ -329,6 +343,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       duplicateLineup,
       removeLineup,
       addFine,
+      addFines,
       updateFine,
       removeFine,
       addFineType,
@@ -352,6 +367,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       duplicateLineup,
       removeLineup,
       addFine,
+      addFines,
       updateFine,
       removeFine,
       addFineType,
