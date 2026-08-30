@@ -1,18 +1,19 @@
 import { newId } from "./id";
 import type { FineEntry, FineType } from "./types";
 
-/** Výchozí sazebník pokut (FA Horšovský Týn – muži, sezóna 2025/26). */
+/** Výchozí sazebník pokut – finální verze (FA Horšovský Týn, muži A). */
 export function defaultFineTypes(): FineType[] {
   const base: Omit<FineType, "id">[] = [
     { label: "Zápisné", amount: 300 },
     { label: "Kapitánská páska – první zápas", amount: 200 },
+    { label: "První gól za FA Horšovský Týn", amount: 200 },
+    { label: "Nevyplněná účast v EOS (7 dní před zápasem)", amount: 100 },
     { label: "Neomluvený pozdní příchod na trénink / zápas", amount: 50 },
     { label: "Neomluvený trénink / zápas", amount: 200 },
     { label: "Zapomenutá věc v šatně nebo na tréninku", amount: 50 },
     { label: "Žlutá karta za nesportovní chování", amount: 100 },
-    { label: "Červená karta za nesportovní chování", amount: 300 },
-    { label: "Hattrick", amount: 200 },
-    { label: "Dovolená v sezóně", amount: 300 },
+    { label: "Červená karta", amount: 300 },
+    { label: "Dovolená v sezóně (v době zápasu)", amount: 300 },
     { label: "Alkohol nebo cigareta v dresu", amount: 200 },
   ];
   return base.map((t) => ({ ...t, id: newId("ft") }));
