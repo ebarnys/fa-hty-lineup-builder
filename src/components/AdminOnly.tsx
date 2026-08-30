@@ -21,12 +21,12 @@ export function AdminOnly({ children }: { children: React.ReactNode }) {
         Tato sekce je přístupná jen správci. Přihlas se přes tlačítko{" "}
         <span className="text-gold font-medium">Admin</span> nahoře. Tým má
         přístup k{" "}
-        <Link href="/lineup" className="text-gold hover:underline">
-          Sestavě
-        </Link>{" "}
-        a{" "}
         <Link href="/pokuty" className="text-gold hover:underline">
           Pokutám
+        </Link>{" "}
+        a{" "}
+        <Link href="/sazebnik" className="text-gold hover:underline">
+          Sazebníku
         </Link>
         .
       </p>

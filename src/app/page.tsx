@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { Card } from "@/components/ui/Ui";
 import { AVAILABILITIES } from "@/lib/positions";
 
 export default function DashboardPage() {
-  const { data, ready } = useStore();
+  const { data, ready, isAdmin } = useStore();
+  const router = useRouter();
+
+  // Přehled je jen pro admina; tým přesměrujeme na Pokuty.
+  useEffect(() => {
+    if (ready && !isAdmin) router.replace("/pokuty");
+  }, [ready, isAdmin, router]);
+
+  if (ready && !isAdmin) return null;
 
   const availableCount = data.players.filter(
     (p) => p.availability === "available"
