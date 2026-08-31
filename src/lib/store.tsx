@@ -66,6 +66,8 @@ export function newLineup(partial: Partial<Lineup> = {}): Lineup {
     formationId: DEFAULT_FORMATION_ID,
     captainId: null,
     goalkeeperId: null,
+    coach: "",
+    manager: "",
     note: "",
     onField: [],
     bench: [],

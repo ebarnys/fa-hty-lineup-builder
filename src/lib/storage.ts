@@ -113,6 +113,8 @@ function sanitizeLineup(l: Partial<Lineup>): Lineup {
     formationId: String(l.formationId ?? "4-3-3"),
     captainId: l.captainId ?? null,
     goalkeeperId: l.goalkeeperId ?? null,
+    coach: String(l.coach ?? ""),
+    manager: String(l.manager ?? ""),
     note: String(l.note ?? ""),
     onField: Array.isArray(l.onField) ? l.onField : [],
     bench: Array.isArray(l.bench) ? l.bench : [],

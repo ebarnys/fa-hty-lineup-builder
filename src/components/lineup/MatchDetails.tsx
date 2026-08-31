@@ -111,6 +111,23 @@ export function MatchDetails({
         </Field>
       </div>
 
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Trenér">
+          <Input
+            value={lineup.coach}
+            onChange={(e) => onChange({ coach: e.target.value })}
+            placeholder="Jméno trenéra"
+          />
+        </Field>
+        <Field label="Vedoucí mužstva">
+          <Input
+            value={lineup.manager}
+            onChange={(e) => onChange({ manager: e.target.value })}
+            placeholder="Jméno vedoucího"
+          />
+        </Field>
+      </div>
+
       <Field label="Poznámka k zápasu">
         <Textarea
           rows={2}

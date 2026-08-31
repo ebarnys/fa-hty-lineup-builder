@@ -3,7 +3,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { positionShort } from "@/lib/positions";
-import { shortName } from "@/lib/players";
+import { fullName } from "@/lib/players";
 import type { Player, PositionCode } from "@/lib/types";
 
 /** Kartička hráče na hřišti – kolečko s číslem + jméno a zkratka pozice. */
@@ -66,8 +66,8 @@ export function FieldChip({
           </span>
         )}
       </div>
-      <div className="mt-1 px-1.5 py-0.5 rounded bg-ink/85 border border-line/70 text-[10px] sm:text-[11px] font-semibold text-zinc-50 leading-none max-w-[74px] truncate text-center shadow">
-        {shortName(player)}
+      <div className="mt-1 px-1.5 py-0.5 rounded bg-ink/85 border border-line/70 text-[9px] sm:text-[10px] font-semibold text-zinc-50 leading-[1.1] max-w-[104px] line-clamp-2 text-center shadow">
+        {fullName(player)}
       </div>
       <div className="mt-0.5 text-[9px] text-gold/90 font-medium leading-none">
         {positionShort(role)}

@@ -303,6 +303,26 @@ export function LineupEditor() {
                   <PoolPlayer key={p.id} player={p} from="bench" />
                 ))}
               </DropZone>
+              {(lineup.coach || lineup.manager) && (
+                <div className="flex flex-wrap gap-x-6 gap-y-1 px-1 pt-1 text-xs">
+                  {lineup.coach && (
+                    <span className="text-zinc-400">
+                      Trenér:{" "}
+                      <span className="text-zinc-100 font-medium">
+                        {lineup.coach}
+                      </span>
+                    </span>
+                  )}
+                  {lineup.manager && (
+                    <span className="text-zinc-400">
+                      Vedoucí mužstva:{" "}
+                      <span className="text-zinc-100 font-medium">
+                        {lineup.manager}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <p className="mt-2 text-xs text-zinc-500">
               Táhni hráče ze seznamu na hřiště, mezi pozicemi, na lavičku, nebo

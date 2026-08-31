@@ -69,6 +69,8 @@ export interface Lineup {
   formationId: string;
   captainId: string | null;
   goalkeeperId: string | null;
+  coach: string;
+  manager: string;
   note: string;
   onField: FieldPlayer[];
   bench: string[]; // id náhradníků
