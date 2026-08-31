@@ -50,6 +50,7 @@ export function LineupEditor() {
   const [initialized, setInitialized] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [poolSearch, setPoolSearch] = useState("");
+  const [poolCollapsed, setPoolCollapsed] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
@@ -300,17 +301,14 @@ export function LineupEditor() {
                 players={data.players}
                 dragging={!!activePlayer}
               />
-              <DropZone
-                id="bench"
-                zone="bench"
-                title="Náhradníci"
-                count={benchPlayers.length}
-                emptyText="Sem přetáhni náhradníky."
-              >
-                {benchPlayers.map((p) => (
-                  <PoolPlayer key={p.id} player={p} from="bench" />
-                ))}
-              </DropZone>
+              {benchPlayers.length > 0 && (
+                <div className="px-1 pt-1 text-xs leading-relaxed">
+                  <span className="text-gold font-semibold">Náhradníci: </span>
+                  <span className="text-zinc-200">
+                    {benchPlayers.map((p) => fullName(p)).join(", ")}
+                  </span>
+                </div>
+              )}
               {(lineup.coach || lineup.manager) && (
                 <div className="flex flex-wrap gap-x-6 gap-y-1 px-1 pt-1 text-xs">
                   {lineup.coach && (
@@ -377,13 +375,32 @@ export function LineupEditor() {
               </div>
             </div>
 
+            {/* Lavička – hned vedle hřiště */}
+            <DropZone
+              id="bench"
+              zone="bench"
+              title="Náhradníci (lavička)"
+              count={benchPlayers.length}
+              emptyText="Sem přetáhni náhradníky."
+            >
+              {benchPlayers.map((p) => (
+                <PoolPlayer key={p.id} player={p} from="bench" />
+              ))}
+            </DropZone>
+
+            {/* Mimo nominaci – sbalitelné */}
             <DropZone
               id="pool"
               zone="pool"
               title="Hráči – mimo nominaci"
               count={poolPlayers.length}
               emptyText="Všichni hráči jsou v nominaci."
-              className="lg:max-h-[560px] lg:overflow-y-auto"
+              collapsible
+              collapsed={poolCollapsed}
+              onToggle={() => setPoolCollapsed((v) => !v)}
+              className={
+                poolCollapsed ? "" : "lg:max-h-[460px] lg:overflow-y-auto"
+              }
             >
               <div className="mb-2">
                 <Input
