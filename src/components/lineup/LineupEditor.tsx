@@ -55,7 +55,10 @@ export function LineupEditor() {
 
   const boardRef = useRef<HTMLDivElement>(null);
 
-  // Počáteční načtení sestavy (z uložených podle ?id, jinak z rozpracovaného draftu).
+  // Počáteční načtení sestavy.
+  // - `?id`: vždy čerstvá uložená verze ze serveru (ne starý lokální koncept).
+  // - bez id: poslední uložená (sdílená) sestava; lokální koncept se použije
+  //   jen když jde o rozpracovanou NEULOŽENOU sestavu.
   useEffect(() => {
     if (!ready || initialized) return;
     let next: Lineup | null = null;
@@ -64,13 +67,18 @@ export function LineupEditor() {
     const draft = rawDraft ? (JSON.parse(rawDraft) as Lineup) : null;
 
     if (idParam) {
-      if (draft && draft.id === idParam) next = draft;
-      else {
-        const found = data.lineups.find((l) => l.id === idParam);
-        next = found ? structuredClone(found) : null;
-      }
-    } else if (draft) {
-      next = draft;
+      const found = data.lineups.find((l) => l.id === idParam);
+      next = found ? structuredClone(found) : null;
+    } else {
+      const latest =
+        data.lineups.length > 0
+          ? [...data.lineups].sort((a, b) => b.updatedAt - a.updatedAt)[0]
+          : null;
+      const draftIsUnsaved =
+        draft && !data.lineups.some((l) => l.id === draft.id);
+      if (draftIsUnsaved) next = draft; // rozpracovaná neuložená sestava
+      else if (latest) next = structuredClone(latest); // sdílená poslední
+      else if (draft) next = draft;
     }
 
     /* eslint-disable react-hooks/set-state-in-effect */
