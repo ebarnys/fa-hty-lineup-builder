@@ -233,7 +233,12 @@ export function LineupEditor() {
       const safe = (lineup.opponent || lineup.name || "sestava")
         .replace(/[^\p{L}\p{N}]+/gu, "-")
         .toLowerCase();
-      await exportNodeToPng(boardRef.current, `sestava-${safe}`);
+      const res = await exportNodeToPng(boardRef.current, `sestava-${safe}`);
+      showToast(
+        res === "share"
+          ? "Vyber „Uložit obrázek“ ve sdílení."
+          : "Obrázek sestavy stažen."
+      );
     } catch (err) {
       console.error(err);
       showToast("Export se nezdařil.");
