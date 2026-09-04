@@ -54,7 +54,7 @@ export function FieldChip({
     >
       <div className="relative">
         <div
-          className={`h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 ${ring} text-ink font-extrabold flex items-center justify-center shadow-lg shadow-black/40`}
+          className={`h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 ${ring} text-ink font-extrabold flex items-center justify-center drop-shadow-[0_3px_4px_rgba(0,0,0,0.35)]`}
         >
           <span className="text-base sm:text-lg leading-none">
             {player.number ?? positionShort(role)}
@@ -66,7 +66,7 @@ export function FieldChip({
           </span>
         )}
       </div>
-      <div className="mt-1 px-1.5 py-0.5 rounded bg-ink/85 border border-line/70 text-[9px] sm:text-[10px] font-semibold text-zinc-50 leading-[1.1] max-w-[104px] line-clamp-2 text-center shadow">
+      <div className="mt-1 px-1.5 py-0.5 rounded bg-ink/85 border border-line/70 text-[9px] sm:text-[10px] font-semibold text-zinc-50 leading-[1.1] max-w-[104px] line-clamp-2 text-center">
         {fullName(player)}
       </div>
       <div className="mt-0.5 text-[9px] text-gold/90 font-medium leading-none">
