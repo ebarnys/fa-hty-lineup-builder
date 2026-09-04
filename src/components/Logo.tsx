@@ -22,8 +22,9 @@ export function Logo({
           <div className="text-sm font-extrabold tracking-wide text-zinc-50">
             FA HORŠOVSKÝ TÝN
           </div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-gold-soft">
-            Lineup Builder
+          <div className="text-[10px] tracking-wide text-zinc-500">
+            powered by{" "}
+            <span className="font-semibold text-gold-soft">TMNK</span>
           </div>
         </div>
       )}
