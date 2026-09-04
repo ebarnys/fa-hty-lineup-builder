@@ -307,11 +307,25 @@ export function LineupEditor() {
                 dragging={!!activePlayer}
               />
               {benchPlayers.length > 0 && (
-                <div className="px-1 pt-1 text-xs leading-relaxed">
-                  <span className="text-gold font-semibold">Náhradníci: </span>
-                  <span className="text-zinc-200">
-                    {benchPlayers.map((p) => fullName(p)).join(", ")}
-                  </span>
+                <div className="px-1 pt-1">
+                  <div className="text-xs font-bold uppercase tracking-wider text-gold mb-2">
+                    Náhradníci
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {benchPlayers.map((p) => (
+                      <span
+                        key={p.id}
+                        className="inline-flex items-center gap-2 rounded-full bg-panel-2 border border-line/80 pl-1 pr-3 py-1"
+                      >
+                        <span className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-b from-gold to-gold-soft text-ink text-xs font-extrabold flex items-center justify-center">
+                          {p.number ?? "–"}
+                        </span>
+                        <span className="text-xs font-semibold text-zinc-100">
+                          {fullName(p)}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
               {(lineup.coach || lineup.manager) && (
