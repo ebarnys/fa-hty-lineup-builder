@@ -75,7 +75,14 @@ export const FORMATIONS: Formation[] = [
     slots: [
       GK,
       ...line(73, ["CB", "CB", "CB"]),
-      ...line(48, ["LW", "CM", "CM", "CM", "RW"]),
+      // Krajní záložníci (wingbacks) široko u lajny.
+      { role: "LW", x: 10, y: 50 },
+      { role: "RW", x: 90, y: 50 },
+      // Střední trojice do trojúhelníku: defenzivní záložník níž,
+      // dva střední záložníci výš.
+      { role: "DM", x: 50, y: 60 },
+      { role: "CM", x: 34, y: 43 },
+      { role: "CM", x: 66, y: 43 },
       ...line(18, ["ST", "ST"]),
     ],
   },
