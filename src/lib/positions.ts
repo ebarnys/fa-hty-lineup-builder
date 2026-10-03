@@ -5,7 +5,7 @@ export const POSITIONS: { code: PositionCode; label: string; short: string }[] =
   { code: "GK", label: "Brankář", short: "BR" },
   { code: "RB", label: "Pravý obránce", short: "PO" },
   { code: "LB", label: "Levý obránce", short: "LO" },
-  { code: "CB", label: "Stoper", short: "ST" },
+  { code: "CB", label: "Stoper", short: "SO" },
   { code: "DM", label: "Defenzivní záložník", short: "DZ" },
   { code: "CM", label: "Střední záložník", short: "SZ" },
   { code: "AM", label: "Ofenzivní záložník", short: "OZ" },
