@@ -223,9 +223,9 @@ export default function PlayersPage() {
       ) : (
         <div className="space-y-2">
           {/* Záhlaví s řazením (jen desktop) */}
-          <div className="hidden grid-cols-[3rem_minmax(0,1.3fr)_minmax(0,1.3fr)_minmax(0,0.9fr)_auto_auto] items-center gap-3 px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 md:grid">
+          <div className="hidden grid-cols-[3rem_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.9fr)_auto_auto] items-center gap-x-1 px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 md:grid">
             <SortHeader label="#" active={sortKey === "number"} dir={sortDir} onClick={() => toggleSort("number")} className="justify-center" />
-            <SortHeader label="Jméno" active={sortKey === "firstName"} dir={sortDir} onClick={() => toggleSort("firstName")} />
+            <SortHeader label="Jméno" active={sortKey === "firstName"} dir={sortDir} onClick={() => toggleSort("firstName")} className="justify-end pr-2" />
             <SortHeader label="Příjmení" active={sortKey === "lastName"} dir={sortDir} onClick={() => toggleSort("lastName")} />
             <span>Přezdívka</span>
             <SortHeader label="Pozice" active={sortKey === "mainPosition"} dir={sortDir} onClick={() => toggleSort("mainPosition")} />
