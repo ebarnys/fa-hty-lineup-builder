@@ -14,9 +14,9 @@ export function Jersey({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  // Delší čísla trochu zmenšíme, ať se vejdou.
+  // Delší čísla trochu zmenšíme, ať se vejdou do širšího trupu.
   const len = number.length;
-  const fontSize = len >= 3 ? 30 : len === 2 ? 38 : 42;
+  const fontSize = len >= 3 ? 28 : len === 2 ? 34 : 42;
 
   return (
     <svg
@@ -25,9 +25,9 @@ export function Jersey({
       style={style}
       aria-hidden
     >
-      {/* Trup + rukávy */}
+      {/* Trup + rukávy – širší, aby se číslo pohodlně vešlo */}
       <path
-        d="M30 19 L40 19 Q50 28 60 19 L70 19 L92 33 L82 49 L70 41 L72 93 L28 93 L30 41 L18 49 L8 33 Z"
+        d="M28 18 L38 18 Q50 27 62 18 L72 18 L94 30 L84 47 L74 39 L78 92 L22 92 L26 39 L16 47 L6 30 Z"
         fill={kit.body}
         stroke={kit.outline}
         strokeWidth={2.2}
@@ -36,26 +36,26 @@ export function Jersey({
       {/* Rukávy odlišeny jemným tmavším podtónem (volitelně stejné jako trup) */}
       {kit.sleeve !== kit.body && (
         <>
-          <path d="M70 19 L92 33 L82 49 L70 41 Z" fill={kit.sleeve} />
-          <path d="M30 19 L8 33 L18 49 L30 41 Z" fill={kit.sleeve} />
+          <path d="M72 18 L94 30 L84 47 L74 39 Z" fill={kit.sleeve} />
+          <path d="M28 18 L6 30 L16 47 L26 39 Z" fill={kit.sleeve} />
         </>
       )}
       {/* Manžety */}
       <path
-        d="M92 33 L82 49"
+        d="M94 30 L84 47"
         stroke={kit.trim}
         strokeWidth={4}
         strokeLinecap="round"
       />
       <path
-        d="M8 33 L18 49"
+        d="M6 30 L16 47"
         stroke={kit.trim}
         strokeWidth={4}
         strokeLinecap="round"
       />
       {/* Límec */}
       <path
-        d="M40 19 Q50 29 60 19"
+        d="M38 18 Q50 28 62 18"
         fill="none"
         stroke={kit.trim}
         strokeWidth={4}
@@ -64,7 +64,7 @@ export function Jersey({
       {/* Číslo */}
       <text
         x="50"
-        y="63"
+        y="61"
         textAnchor="middle"
         dominantBaseline="central"
         fontSize={fontSize}
