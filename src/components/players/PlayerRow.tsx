@@ -129,7 +129,7 @@ export function PlayerRow({
   return (
     <div
       onClick={onOpen}
-      className="group grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-panel/70 px-3 py-2.5 transition-colors hover:border-gold/40 hover:bg-panel-2/50 md:grid-cols-[3rem_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.9fr)_auto_auto] md:gap-x-1 md:gap-y-3"
+      className="group grid cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-panel/70 px-3 py-2.5 transition-colors hover:border-gold/40 hover:bg-panel-2/50 md:grid-cols-[3rem_8rem_8rem_minmax(7rem,1fr)_auto_auto] md:gap-x-3 md:gap-y-3"
       title="Otevřít detail hráče"
     >
       {/* Číslo */}
@@ -148,7 +148,6 @@ export function PlayerRow({
             value={player.firstName}
             ariaLabel="Jméno"
             placeholder="Jméno"
-            className="md:text-right"
             onCommit={(v) => onPatch({ firstName: v })}
           />
         </div>
