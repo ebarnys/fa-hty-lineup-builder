@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { DEFAULT_FORMATION_ID } from "./formations";
+import { DEFAULT_KIT_ID } from "./kits";
 import { newId } from "./id";
 import { emptyData, loadData, saveData } from "./storage";
 import type {
@@ -64,6 +65,7 @@ export function newLineup(partial: Partial<Lineup> = {}): Lineup {
     venue: "",
     isHome: true,
     formationId: DEFAULT_FORMATION_ID,
+    kitId: DEFAULT_KIT_ID,
     captainId: null,
     goalkeeperId: null,
     coach: "",

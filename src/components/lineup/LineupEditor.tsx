@@ -20,8 +20,10 @@ import { PoolPlayer } from "./PoolPlayer";
 import { BoardHeader } from "./BoardHeader";
 import { MatchDetails } from "./MatchDetails";
 import { WarningsPanel } from "./WarningsPanel";
+import { Jersey } from "./Jersey";
 import { Button, Input, Select } from "@/components/ui/Ui";
 import { FORMATIONS, getFormation } from "@/lib/formations";
+import { KITS, getKit } from "@/lib/kits";
 import { newLineup, useStore } from "@/lib/store";
 import {
   applyFormation,
@@ -373,6 +375,41 @@ export function LineupEditor() {
                   ))}
                 </Select>
               </div>
+
+              {/* Výběr dresu */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-zinc-400">
+                    Dres
+                  </label>
+                  <span className="text-xs text-zinc-500">
+                    {getKit(lineup.kitId).name}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {KITS.map((k) => {
+                    const active = lineup.kitId === k.id;
+                    return (
+                      <button
+                        key={k.id}
+                        type="button"
+                        onClick={() => update({ kitId: k.id })}
+                        title={k.name}
+                        aria-label={`Dres: ${k.name}`}
+                        aria-pressed={active}
+                        className={`rounded-lg border p-1 transition-colors ${
+                          active
+                            ? "border-gold bg-gold/10"
+                            : "border-line bg-panel-2 hover:border-gold/40"
+                        }`}
+                      >
+                        <Jersey kit={k} number="" className="h-8 w-8" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="flex items-center justify-between text-xs">
                 <span className="text-zinc-400">
                   Na hřišti: {lineup.onField.length}/11

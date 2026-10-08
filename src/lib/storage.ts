@@ -111,6 +111,7 @@ function sanitizeLineup(l: Partial<Lineup>): Lineup {
     venue: String(l.venue ?? ""),
     isHome: Boolean(l.isHome ?? true),
     formationId: String(l.formationId ?? "4-3-3"),
+    kitId: String(l.kitId ?? "sky"),
     captainId: l.captainId ?? null,
     goalkeeperId: l.goalkeeperId ?? null,
     coach: String(l.coach ?? ""),

@@ -2,16 +2,19 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { Jersey } from "./Jersey";
 import { positionShort } from "@/lib/positions";
 import { fullName } from "@/lib/players";
+import { getKit, GK_KIT } from "@/lib/kits";
 import type { Player, PositionCode } from "@/lib/types";
 
-/** Kartička hráče na hřišti – kolečko s číslem + jméno a zkratka pozice. */
+/** Kartička hráče na hřišti – dres s číslem + jméno a zkratka pozice. */
 export function FieldChip({
   player,
   x,
   y,
   role,
+  kitId,
   isCaptain,
   isGoalkeeper,
   draggable = true,
@@ -21,6 +24,8 @@ export function FieldChip({
   y: number;
   /** Role podle místa na hřišti (pozice rozestavení), ne z profilu hráče. */
   role: PositionCode;
+  /** Zvolený dres sestavy. */
+  kitId: string;
   isCaptain: boolean;
   isGoalkeeper: boolean;
   draggable?: boolean;
@@ -40,9 +45,9 @@ export function FieldChip({
     zIndex: isDragging ? 50 : 10,
   };
 
-  const ring = isGoalkeeper
-    ? "border-emerald-400 bg-emerald-500"
-    : "border-gold bg-gradient-to-b from-gold to-gold-soft";
+  const kit = isGoalkeeper ? GK_KIT : getKit(kitId);
+  const label =
+    player.number != null ? String(player.number) : positionShort(role);
 
   return (
     <div
@@ -53,15 +58,13 @@ export function FieldChip({
       {...attributes}
     >
       <div className="relative">
-        <div
-          className={`h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 ${ring} text-ink font-extrabold flex items-center justify-center drop-shadow-[0_3px_4px_rgba(0,0,0,0.35)]`}
-        >
-          <span className="text-base sm:text-lg leading-none">
-            {player.number ?? positionShort(role)}
-          </span>
-        </div>
+        <Jersey
+          kit={kit}
+          number={label}
+          className="h-14 w-14 sm:h-16 sm:w-16 drop-shadow-[0_3px_4px_rgba(0,0,0,0.4)]"
+        />
         {isCaptain && (
-          <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-white text-ink text-[11px] font-black flex items-center justify-center border border-ink shadow">
+          <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-white text-ink text-[11px] font-black flex items-center justify-center border border-ink shadow">
             C
           </span>
         )}

@@ -39,7 +39,7 @@ export function Pitch({
   return (
     <div
       ref={setNodeRef}
-      className={`relative w-full aspect-[3/4] sm:aspect-[4/5] rounded-xl overflow-hidden border-2 transition-colors ${
+      className={`relative w-full aspect-[3/4] sm:aspect-[5/7] rounded-xl overflow-hidden border-2 transition-colors ${
         isOver ? "border-gold" : "border-line"
       }`}
       style={{
@@ -66,6 +66,7 @@ export function Pitch({
             x={f.x}
             y={f.y}
             role={slotRoleAt(formation, f.x, f.y)}
+            kitId={lineup.kitId}
             isCaptain={lineup.captainId === f.playerId}
             isGoalkeeper={lineup.goalkeeperId === f.playerId}
             draggable={interactive}
@@ -84,13 +85,13 @@ function GhostSlot({ slot, active }: { slot: FormationSlot; active: boolean }) {
       style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
     >
       <div
-        className={`h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 border-dashed flex items-center justify-center transition-colors ${
+        className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full border-2 border-dashed flex items-center justify-center transition-colors ${
           active
             ? "border-gold bg-gold/15 text-gold animate-pulse"
             : "border-white/45 bg-white/5 text-white/70"
         }`}
       >
-        <JerseyIcon className="h-6 w-6 sm:h-7 sm:w-7 opacity-80" />
+        <JerseyIcon className="h-7 w-7 sm:h-8 sm:w-8 opacity-80" />
       </div>
       <div
         className={`mt-1 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold leading-none ${

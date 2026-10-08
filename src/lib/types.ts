@@ -67,6 +67,8 @@ export interface Lineup {
   venue: string;
   isHome: boolean;
   formationId: string;
+  /** Zvolená varianta dresu (viz KITS v lib/kits). */
+  kitId: string;
   captainId: string | null;
   goalkeeperId: string | null;
   coach: string;
