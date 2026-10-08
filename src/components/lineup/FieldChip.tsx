@@ -61,7 +61,7 @@ export function FieldChip({
         <Jersey
           kit={kit}
           number={label}
-          className="h-14 w-14 sm:h-16 sm:w-16 drop-shadow-[0_3px_4px_rgba(0,0,0,0.4)]"
+          className="h-16 w-16 sm:h-20 sm:w-20 drop-shadow-[0_3px_4px_rgba(0,0,0,0.4)]"
         />
         {isCaptain && (
           <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-white text-ink text-[11px] font-black flex items-center justify-center border border-ink shadow">

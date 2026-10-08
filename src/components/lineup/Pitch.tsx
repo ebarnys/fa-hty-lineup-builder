@@ -85,13 +85,13 @@ function GhostSlot({ slot, active }: { slot: FormationSlot; active: boolean }) {
       style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
     >
       <div
-        className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full border-2 border-dashed flex items-center justify-center transition-colors ${
+        className={`h-14 w-14 sm:h-16 sm:w-16 rounded-full border-2 border-dashed flex items-center justify-center transition-colors ${
           active
             ? "border-gold bg-gold/15 text-gold animate-pulse"
             : "border-white/45 bg-white/5 text-white/70"
         }`}
       >
-        <JerseyIcon className="h-7 w-7 sm:h-8 sm:w-8 opacity-80" />
+        <JerseyIcon className="h-8 w-8 sm:h-9 sm:w-9 opacity-80" />
       </div>
       <div
         className={`mt-1 px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold leading-none ${
