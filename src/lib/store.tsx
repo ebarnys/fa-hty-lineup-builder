@@ -235,11 +235,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     (id: string): Lineup | null => {
       const src = data.lineups.find((l) => l.id === id);
       if (!src) return null;
-      const copy = newLineup({
+      const now = Date.now();
+      // Kompletní kopie sestavy s novou identitou (hráči na hřišti, lavička,
+      // rozestavení, dres, kapitán, brankář, realizační tým – vše se zkopíruje).
+      const copy: Lineup = {
         ...src,
-        id: undefined,
+        id: newId("lu"),
         name: `${src.name} (kopie)`,
-      });
+        onField: src.onField.map((f) => ({ ...f })),
+        bench: [...src.bench],
+        createdAt: now,
+        updatedAt: now,
+      };
       setData((d) => ({ ...d, lineups: [...d.lineups, copy] }));
       return copy;
     },
