@@ -113,6 +113,28 @@ export function countAppearanceMatching(
   return { total, unmatched };
 }
 
+/** Navrhne doplnění ID člena hráčům, kteří ho nemají – podle jména ze zápisů.
+ *  Vrací dvojice {playerId, memberId} k nastavení. */
+export function buildMemberIdBackfill(
+  players: Player[],
+  matches: MatchRecord[]
+): { playerId: string; memberId: string }[] {
+  const byName = new Map<string, string>(); // nameKey → memberId
+  for (const m of matches)
+    for (const a of m.appearances) {
+      if (!a.memberId) continue;
+      const k = nameKey(a.name);
+      if (!byName.has(k)) byName.set(k, a.memberId);
+    }
+  const out: { playerId: string; memberId: string }[] = [];
+  for (const p of players) {
+    if (p.memberId) continue;
+    const mid = byName.get(nameKey(`${p.firstName} ${p.lastName}`));
+    if (mid) out.push({ playerId: p.id, memberId: mid });
+  }
+  return out;
+}
+
 /** Krátký staty-řádek pro použití u hráče (např. v sestavě). */
 export function statLine(s: PlayerStats | undefined): string {
   if (!s || s.apps === 0) return "";

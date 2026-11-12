@@ -33,7 +33,8 @@ const COLS: { key: SortKey; label: string; help?: string; num: boolean }[] = [
 ];
 
 export default function StatistikyPage() {
-  const { data, ready, importMatches, removeMatch, isAdmin } = useStore();
+  const { data, ready, importMatches, removeMatch, backfillMemberIds, isAdmin } =
+    useStore();
   const [sortKey, setSortKey] = useState<SortKey>("minutes");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [formOpen, setFormOpen] = useState(false);
@@ -76,10 +77,24 @@ export default function StatistikyPage() {
 
   const handleImport = () => {
     const added = importMatches(SEED_MATCHES);
-    showToast(
+    // Hned po importu zkus hráčům dotáhnout ID člena podle jména.
+    const filled = backfillMemberIds();
+    const parts: string[] = [];
+    parts.push(
       added > 0
-        ? `Naimportováno ${added} zápasů podzimní části.`
-        : "Podzimní zápasy už jsou naimportované."
+        ? `Naimportováno ${added} zápasů.`
+        : "Zápasy už byly naimportované."
+    );
+    if (filled > 0) parts.push(`Doplněno ID člena ${filled} hráčům.`);
+    showToast(parts.join(" "));
+  };
+
+  const handleBackfill = () => {
+    const filled = backfillMemberIds();
+    showToast(
+      filled > 0
+        ? `Doplněno ID člena ${filled} hráčům.`
+        : "Nebylo co doplnit (podle jmen se nenašla shoda)."
     );
   };
 
@@ -124,9 +139,17 @@ export default function StatistikyPage() {
         ) : (
           <>
             {unmatched.unmatched > 0 && (
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
-                {unmatched.unmatched} nastoupení se nepodařilo napárovat na hráče –
-                doplň hráčům „ID člena“ v detailu (Hráči), ať se staty započítají.
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
+                <span>
+                  {unmatched.unmatched} nastoupení se nepodařilo napárovat na hráče –
+                  zkus doplnit ID člena, nebo ho dopiš ručně v detailu hráče.
+                </span>
+                <button
+                  onClick={handleBackfill}
+                  className="shrink-0 rounded-md border border-amber-400/40 bg-amber-400/10 px-2.5 py-1 font-medium text-amber-200 hover:bg-amber-400/20"
+                >
+                  Doplnit ID člena z zápisů
+                </button>
               </div>
             )}
 

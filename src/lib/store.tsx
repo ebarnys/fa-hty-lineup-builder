@@ -11,6 +11,7 @@ import {
 } from "react";
 import { DEFAULT_FORMATION_ID } from "./formations";
 import { DEFAULT_KIT_ID } from "./kits";
+import { buildMemberIdBackfill } from "./stats";
 import { newId } from "./id";
 import { emptyData, loadData, normalize, saveData } from "./storage";
 import type {
@@ -48,6 +49,8 @@ interface StoreValue {
   updateMatch: (id: string, patch: Partial<MatchRecord>) => void;
   removeMatch: (id: string) => void;
   importMatches: (list: Omit<MatchRecord, "createdAt" | "updatedAt">[]) => number;
+  /** Doplní hráčům bez ID člena ID podle jména ze zápisů. Vrací počet doplněných. */
+  backfillMemberIds: () => number;
   // Přístup
   isAdmin: boolean;
   login: (password: string) => Promise<boolean>;
@@ -364,6 +367,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const backfillMemberIds = useCallback(() => {
+    let count = 0;
+    setData((d) => {
+      const patches = buildMemberIdBackfill(d.players, d.matches);
+      if (patches.length === 0) return d;
+      const map = new Map(patches.map((p) => [p.playerId, p.memberId]));
+      count = patches.length;
+      return {
+        ...d,
+        players: d.players.map((p) =>
+          map.has(p.id) ? { ...p, memberId: map.get(p.id)! } : p
+        ),
+      };
+    });
+    return count;
+  }, []);
+
   const login = useCallback(async (password: string) => {
     try {
       const r = await fetch("/api/auth", {
@@ -413,6 +433,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateMatch,
       removeMatch,
       importMatches,
+      backfillMemberIds,
       isAdmin,
       login,
       logout,
@@ -441,6 +462,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateMatch,
       removeMatch,
       importMatches,
+      backfillMemberIds,
       isAdmin,
       login,
       logout,
