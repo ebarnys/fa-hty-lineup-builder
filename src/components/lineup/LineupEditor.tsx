@@ -36,6 +36,7 @@ import {
 } from "@/lib/lineupOps";
 import { checkLineup } from "@/lib/validation";
 import { exportNodeToPng } from "@/lib/exportImage";
+import { computeAllStats, statLine } from "@/lib/stats";
 import { fullName, playerById } from "@/lib/players";
 import type { Lineup, Player } from "@/lib/types";
 
@@ -145,6 +146,12 @@ export function LineupEditor() {
   const warnings = useMemo(
     () => checkLineup(lineup, data.players),
     [lineup, data.players]
+  );
+
+  // Statistiky hráčů (pro rychlý přehled formy/vytížení při skládání).
+  const statsMap = useMemo(
+    () => computeAllStats(data.players, data.matches),
+    [data.players, data.matches]
   );
 
   // --- Drag & drop ---
@@ -440,7 +447,12 @@ export function LineupEditor() {
               emptyText="Sem přetáhni náhradníky."
             >
               {benchPlayers.map((p) => (
-                <PoolPlayer key={p.id} player={p} from="bench" />
+                <PoolPlayer
+                  key={p.id}
+                  player={p}
+                  from="bench"
+                  stat={statLine(statsMap.get(p.id))}
+                />
               ))}
             </DropZone>
 
@@ -467,7 +479,12 @@ export function LineupEditor() {
                 />
               </div>
               {poolPlayers.map((p) => (
-                <PoolPlayer key={p.id} player={p} from="pool" />
+                <PoolPlayer
+                  key={p.id}
+                  player={p}
+                  from="pool"
+                  stat={statLine(statsMap.get(p.id))}
+                />
               ))}
             </DropZone>
           </div>

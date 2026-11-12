@@ -1,6 +1,14 @@
 import { createDemoPlayers } from "./demoData";
 import { defaultFineTypes } from "./fines";
-import type { AppData, FineEntry, FineType, Lineup, Player } from "./types";
+import type {
+  AppData,
+  FineEntry,
+  FineType,
+  Lineup,
+  MatchAppearance,
+  MatchRecord,
+  Player,
+} from "./types";
 
 const STORAGE_KEY = "fa-hty-lineup-builder";
 const CURRENT_VERSION = 1;
@@ -12,6 +20,7 @@ export function emptyData(withDemo = true): AppData {
     // Sazebník pokut je výchozí konfigurace, seedujeme ho vždy.
     fineTypes: defaultFineTypes(),
     fines: [],
+    matches: [],
     version: CURRENT_VERSION,
   };
 }
@@ -59,7 +68,44 @@ export function normalize(input: Partial<AppData>): AppData {
   const fines: FineEntry[] = Array.isArray(input.fines)
     ? input.fines.map(sanitizeFineEntry)
     : [];
-  return { players, lineups, fineTypes, fines, version: CURRENT_VERSION };
+  const matches: MatchRecord[] = Array.isArray(input.matches)
+    ? input.matches.map(sanitizeMatch)
+    : [];
+  return { players, lineups, fineTypes, fines, matches, version: CURRENT_VERSION };
+}
+
+function num(v: unknown): number {
+  return typeof v === "number" && Number.isFinite(v) ? v : 0;
+}
+
+function sanitizeAppearance(a: Partial<MatchAppearance>): MatchAppearance {
+  return {
+    memberId: String(a.memberId ?? ""),
+    name: String(a.name ?? ""),
+    started: Boolean(a.started),
+    minutes: num(a.minutes),
+    goals: num(a.goals),
+    yellow: num(a.yellow),
+    red: num(a.red),
+  };
+}
+
+function sanitizeMatch(m: Partial<MatchRecord>): MatchRecord {
+  return {
+    id: String(m.id ?? ""),
+    round: typeof m.round === "number" ? m.round : null,
+    date: String(m.date ?? ""),
+    competition: String(m.competition ?? ""),
+    opponent: String(m.opponent ?? ""),
+    home: Boolean(m.home ?? true),
+    ourScore: num(m.ourScore),
+    oppScore: num(m.oppScore),
+    appearances: Array.isArray(m.appearances)
+      ? m.appearances.map(sanitizeAppearance)
+      : [],
+    createdAt: typeof m.createdAt === "number" ? m.createdAt : Date.now(),
+    updatedAt: typeof m.updatedAt === "number" ? m.updatedAt : Date.now(),
+  };
 }
 
 function sanitizeFineType(t: Partial<FineType>): FineType {
@@ -98,7 +144,18 @@ function sanitizePlayer(p: Partial<Player>): Player {
     number: typeof p.number === "number" ? p.number : null,
     note: String(p.note ?? ""),
     availability: p.availability ?? "available",
+    memberId: extractMemberId(p),
   };
+}
+
+/** Vezme memberId, nebo ho zkusí vytáhnout z poznámky („ID člena: 12345678"). */
+function extractMemberId(p: Partial<Player>): string {
+  if (p.memberId) return String(p.memberId).trim();
+  const note = String(p.note ?? "");
+  const labeled = note.match(/ID\s*člena[:\s]*([0-9]{6,10})/i);
+  if (labeled) return labeled[1];
+  const any = note.match(/\b([0-9]{6,10})\b/);
+  return any ? any[1] : "";
 }
 
 function sanitizeLineup(l: Partial<Lineup>): Lineup {

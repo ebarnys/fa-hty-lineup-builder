@@ -13,6 +13,7 @@ const ADMIN_LINKS = [
   { href: "/players", label: "Hráči" },
   { href: "/lineup", label: "Sestava" },
   { href: "/lineups", label: "Uložené sestavy" },
+  { href: "/statistiky", label: "Statistiky" },
   { href: "/pokuty", label: "Pokuty" },
   { href: "/sazebnik", label: "Sazebník" },
   { href: "/settings", label: "Data" },

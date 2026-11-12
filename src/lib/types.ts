@@ -32,6 +32,8 @@ export interface Player {
   number: number | null;
   note: string;
   availability: Availability;
+  /** ID člena (FAČR) – klíč pro párování statistik ze zápisů o utkání. */
+  memberId: string;
 }
 
 /** Jeden hráč umístěný na hřišti (volná pozice v procentech). */
@@ -102,10 +104,38 @@ export interface FineEntry {
 }
 
 /** Struktura celého perzistentního úložiště. */
+/** Nastoupení jednoho hráče v jednom zápase. */
+export interface MatchAppearance {
+  /** ID člena (FAČR) pro párování na hráče; jméno je záloha. */
+  memberId: string;
+  name: string;
+  started: boolean;
+  minutes: number;
+  goals: number;
+  yellow: number;
+  red: number;
+}
+
+/** Odehraný zápas se statistikami hráčů. */
+export interface MatchRecord {
+  id: string;
+  round: number | null;
+  date: string; // YYYY-MM-DD
+  competition: string;
+  opponent: string;
+  home: boolean;
+  ourScore: number;
+  oppScore: number;
+  appearances: MatchAppearance[];
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface AppData {
   players: Player[];
   lineups: Lineup[];
   fineTypes: FineType[];
   fines: FineEntry[];
+  matches: MatchRecord[];
   version: number;
 }

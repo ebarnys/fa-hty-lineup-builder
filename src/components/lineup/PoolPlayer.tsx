@@ -9,9 +9,12 @@ import type { Player } from "@/lib/types";
 export function PoolPlayer({
   player,
   from,
+  stat,
 }: {
   player: Player;
   from: "pool" | "bench";
+  /** Krátký staty-řádek (např. „10 záp · 873′ · 2 g"). */
+  stat?: string;
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `${from}-${player.id}`,
@@ -38,6 +41,9 @@ export function PoolPlayer({
           {player.secondaryPositions.length > 0 &&
             ` · ${player.secondaryPositions.map(positionShort).join(", ")}`}
         </div>
+        {stat && (
+          <div className="text-[10px] text-gold/80 truncate">{stat}</div>
+        )}
       </div>
       <span
         className={`shrink-0 h-2.5 w-2.5 rounded-full ${av.dot}`}

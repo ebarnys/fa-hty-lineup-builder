@@ -8,6 +8,7 @@ import { PlayerRow } from "@/components/players/PlayerRow";
 import { PlayerForm, type PlayerDraft } from "@/components/players/PlayerForm";
 import { AVAILABILITIES, FEET, POSITIONS } from "@/lib/positions";
 import { fullName } from "@/lib/players";
+import { computeAllStats } from "@/lib/stats";
 import { AdminOnly } from "@/components/AdminOnly";
 import type { Player } from "@/lib/types";
 
@@ -39,6 +40,11 @@ export default function PlayersPage() {
 
   const [sortKey, setSortKey] = useState<SortKey>("lastName");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const statsMap = useMemo(
+    () => computeAllStats(data.players, data.matches),
+    [data.players, data.matches]
+  );
 
   const toggleSort = (key: SortKey) => {
     if (key === sortKey) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -252,6 +258,7 @@ export default function PlayersPage() {
       >
         <PlayerForm
           initial={editing ?? undefined}
+          stats={editing ? statsMap.get(editing.id) : undefined}
           onSubmit={handleSubmit}
           onCancel={() => setFormOpen(false)}
         />

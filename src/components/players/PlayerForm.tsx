@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button, Field, Input, Select, Textarea } from "@/components/ui/Ui";
 import { AVAILABILITIES, FEET, POSITIONS } from "@/lib/positions";
+import type { PlayerStats } from "@/lib/stats";
 import type {
   Availability,
   Foot,
@@ -23,14 +24,17 @@ const EMPTY: PlayerDraft = {
   number: null,
   note: "",
   availability: "available",
+  memberId: "",
 };
 
 export function PlayerForm({
   initial,
+  stats,
   onSubmit,
   onCancel,
 }: {
   initial?: Player;
+  stats?: PlayerStats;
   onSubmit: (draft: PlayerDraft) => void;
   onCancel: () => void;
 }) {
@@ -84,6 +88,8 @@ export function PlayerForm({
 
   return (
     <form onSubmit={submit} className="space-y-4">
+      {stats && stats.apps > 0 && <StatsSummary stats={stats} />}
+
       <div className="grid grid-cols-2 gap-3">
         <Field label="Jméno">
           <Input
@@ -209,6 +215,15 @@ export function PlayerForm({
         </Field>
       </div>
 
+      <Field label="ID člena (FAČR)">
+        <Input
+          inputMode="numeric"
+          value={draft.memberId}
+          onChange={(e) => set("memberId", e.target.value.replace(/[^0-9]/g, ""))}
+          placeholder="např. 95071526 – páruje statistiky ze zápisů"
+        />
+      </Field>
+
       <Field label="Poznámka">
         <Textarea
           rows={2}
@@ -227,6 +242,63 @@ export function PlayerForm({
         </Button>
       </div>
     </form>
+  );
+}
+
+/** Sezónní statistiky hráče v detailu (jen pro čtení). */
+function StatsSummary({ stats }: { stats: PlayerStats }) {
+  const [open, setOpen] = useState(false);
+  const items: [string, string | number][] = [
+    ["Zápasů", stats.apps],
+    ["V základu", stats.starts],
+    ["Minut", stats.minutes],
+    ["Ø min", stats.avgMinutes],
+    ["Góly", stats.goals],
+    ["ŽK / ČK", `${stats.yellow} / ${stats.red}`],
+  ];
+  return (
+    <div className="rounded-lg border border-gold/25 bg-gold/5 p-3">
+      <div className="mb-2 text-xs font-bold uppercase tracking-wider text-gold">
+        Statistiky sezony
+      </div>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+        {items.map(([label, val]) => (
+          <div key={label} className="text-center">
+            <div className="text-lg font-extrabold tabular-nums">{val}</div>
+            <div className="text-[10px] text-zinc-400">{label}</div>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="mt-2 text-xs text-gold hover:underline"
+      >
+        {open ? "Skrýt zápasy" : "Zobrazit zápas po zápase"}
+      </button>
+      {open && (
+        <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
+          {stats.perMatch.map(({ match, app }) => (
+            <div
+              key={match.id}
+              className="flex items-center justify-between gap-2 rounded bg-panel-2/50 px-2 py-1 text-xs"
+            >
+              <span className="min-w-0 truncate text-zinc-300">
+                {match.round ? `${match.round}. k. ` : ""}
+                {match.home ? "" : "@ "}
+                {match.opponent}
+              </span>
+              <span className="shrink-0 text-zinc-400">
+                {app.started ? "základ" : "stříd."} · {app.minutes}′
+                {app.goals ? ` · ${app.goals}g` : ""}
+                {app.yellow ? ` · ${app.yellow}ŽK` : ""}
+                {app.red ? ` · ${app.red}ČK` : ""}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -12,12 +12,13 @@ import {
 import { DEFAULT_FORMATION_ID } from "./formations";
 import { DEFAULT_KIT_ID } from "./kits";
 import { newId } from "./id";
-import { emptyData, loadData, saveData } from "./storage";
+import { emptyData, loadData, normalize, saveData } from "./storage";
 import type {
   AppData,
   FineEntry,
   FineType,
   Lineup,
+  MatchRecord,
   Player,
 } from "./types";
 
@@ -42,6 +43,11 @@ interface StoreValue {
   addFineType: (t: Omit<FineType, "id">) => void;
   updateFineType: (id: string, patch: Partial<FineType>) => void;
   removeFineType: (id: string) => void;
+  // Zápasy / statistiky
+  addMatch: (m: Omit<MatchRecord, "id" | "createdAt" | "updatedAt">) => MatchRecord;
+  updateMatch: (id: string, patch: Partial<MatchRecord>) => void;
+  removeMatch: (id: string) => void;
+  importMatches: (list: Omit<MatchRecord, "createdAt" | "updatedAt">[]) => number;
   // Přístup
   isAdmin: boolean;
   login: (password: string) => Promise<boolean>;
@@ -123,7 +129,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const json = await res.json();
         if (!cancelled && json?.configured) {
           if (json.data) {
-            setData(json.data as AppData);
+            // Normalizace doplní nová pole (matches, memberId) u starších dat.
+            setData(normalize(json.data as Partial<AppData>));
           } else {
             // První spuštění se sdíleným úložištěm – naplníme demo daty.
             const seeded = emptyData(true);
@@ -315,6 +322,48 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  // --- Zápasy / statistiky ---
+  const addMatch = useCallback(
+    (m: Omit<MatchRecord, "id" | "createdAt" | "updatedAt">) => {
+      const now = Date.now();
+      const match: MatchRecord = { ...m, id: newId("m"), createdAt: now, updatedAt: now };
+      setData((d) => ({ ...d, matches: [...d.matches, match] }));
+      return match;
+    },
+    []
+  );
+
+  const updateMatch = useCallback((id: string, patch: Partial<MatchRecord>) => {
+    setData((d) => ({
+      ...d,
+      matches: d.matches.map((m) =>
+        m.id === id ? { ...m, ...patch, updatedAt: Date.now() } : m
+      ),
+    }));
+  }, []);
+
+  const removeMatch = useCallback((id: string) => {
+    setData((d) => ({ ...d, matches: d.matches.filter((m) => m.id !== id) }));
+  }, []);
+
+  // Hromadný import (seed). Přeskočí zápasy, jejichž id už existuje. Vrací počet přidaných.
+  const importMatches = useCallback(
+    (list: Omit<MatchRecord, "createdAt" | "updatedAt">[]) => {
+      let added = 0;
+      setData((d) => {
+        const existing = new Set(d.matches.map((m) => m.id));
+        const now = Date.now();
+        const toAdd = list
+          .filter((m) => !existing.has(m.id))
+          .map((m) => ({ ...m, createdAt: now, updatedAt: now }));
+        added = toAdd.length;
+        return { ...d, matches: [...d.matches, ...toAdd] };
+      });
+      return added;
+    },
+    []
+  );
+
   const login = useCallback(async (password: string) => {
     try {
       const r = await fetch("/api/auth", {
@@ -360,6 +409,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addFineType,
       updateFineType,
       removeFineType,
+      addMatch,
+      updateMatch,
+      removeMatch,
+      importMatches,
       isAdmin,
       login,
       logout,
@@ -384,6 +437,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       addFineType,
       updateFineType,
       removeFineType,
+      addMatch,
+      updateMatch,
+      removeMatch,
+      importMatches,
       isAdmin,
       login,
       logout,

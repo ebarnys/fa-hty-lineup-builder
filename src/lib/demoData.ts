@@ -3,7 +3,7 @@ import type { Player } from "./types";
 
 /** Ukázkoví hráči, aby byla aplikace ihned použitelná. */
 export function createDemoPlayers(): Player[] {
-  const base: Omit<Player, "id">[] = [
+  const base: Omit<Player, "id" | "memberId">[] = [
     {
       firstName: "Tomáš",
       lastName: "Novák",
@@ -174,5 +174,5 @@ export function createDemoPlayers(): Player[] {
     },
   ];
 
-  return base.map((p) => ({ ...p, id: newId("pl") }));
+  return base.map((p) => ({ ...p, id: newId("pl"), memberId: "" }));
 }
