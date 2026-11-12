@@ -7,6 +7,7 @@ import type {
   Lineup,
   MatchAppearance,
   MatchRecord,
+  PlannedSub,
   Player,
 } from "./types";
 
@@ -158,6 +159,16 @@ function extractMemberId(p: Partial<Player>): string {
   return any ? any[1] : "";
 }
 
+function sanitizeSub(s: Partial<PlannedSub>): PlannedSub {
+  return {
+    id: String(s.id ?? ""),
+    outId: String(s.outId ?? ""),
+    inId: String(s.inId ?? ""),
+    minute: typeof s.minute === "number" ? s.minute : null,
+    note: String(s.note ?? ""),
+  };
+}
+
 function sanitizeLineup(l: Partial<Lineup>): Lineup {
   return {
     id: String(l.id ?? ""),
@@ -176,6 +187,7 @@ function sanitizeLineup(l: Partial<Lineup>): Lineup {
     note: String(l.note ?? ""),
     onField: Array.isArray(l.onField) ? l.onField : [],
     bench: Array.isArray(l.bench) ? l.bench : [],
+    subs: Array.isArray(l.subs) ? l.subs.map(sanitizeSub) : [],
     createdAt: typeof l.createdAt === "number" ? l.createdAt : Date.now(),
     updatedAt: typeof l.updatedAt === "number" ? l.updatedAt : Date.now(),
   };

@@ -59,6 +59,18 @@ export interface Formation {
   slots: FormationSlot[];
 }
 
+/** Jedno naplánované střídání (kdo za koho a v jaké minutě). */
+export interface PlannedSub {
+  id: string;
+  /** Hráč, který jde ze hřiště (v základní sestavě). */
+  outId: string;
+  /** Hráč, který jde na hřiště (z lavičky). */
+  inId: string;
+  /** Plánovaná minuta střídání (nepovinné). */
+  minute: number | null;
+  note: string;
+}
+
 /** Kompletní sestava na jeden zápas. */
 export interface Lineup {
   id: string;
@@ -78,6 +90,8 @@ export interface Lineup {
   note: string;
   onField: FieldPlayer[];
   bench: string[]; // id náhradníků
+  /** Naplánovaná střídání (příprava před zápasem). */
+  subs: PlannedSub[];
   createdAt: number;
   updatedAt: number;
 }

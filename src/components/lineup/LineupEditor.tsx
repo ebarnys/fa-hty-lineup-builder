@@ -20,6 +20,7 @@ import { PoolPlayer } from "./PoolPlayer";
 import { BoardHeader } from "./BoardHeader";
 import { MatchDetails } from "./MatchDetails";
 import { WarningsPanel } from "./WarningsPanel";
+import { SubPlanner } from "./SubPlanner";
 import { Jersey } from "./Jersey";
 import { Button, Input, Select } from "@/components/ui/Ui";
 import { FORMATIONS, getFormation } from "@/lib/formations";
@@ -504,6 +505,13 @@ export function LineupEditor() {
             <WarningsPanel warnings={warnings} />
           </div>
         </div>
+
+        {/* Plán střídání */}
+        <SubPlanner
+          lineup={lineup}
+          players={data.players}
+          onChange={(subs) => update({ subs })}
+        />
       </div>
 
       {/* Náhled taženého hráče */}

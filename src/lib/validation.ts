@@ -60,6 +60,57 @@ export function checkLineup(lineup: Lineup, players: Player[]): LineupWarning[] 
     });
   }
 
+  // Lavička – v soutěži smí být max 7 náhradníků.
+  if (lineup.bench.length > 7) {
+    warnings.push({
+      level: "warning",
+      message: `Na lavičce je ${lineup.bench.length} náhradníků – pravidla povolují max 7.`,
+    });
+  }
+
+  // Plán střídání – max 5 střídajících hráčů.
+  const onFieldSet = new Set(onFieldIds);
+  const benchSet = new Set(lineup.bench);
+  const subs = lineup.subs ?? [];
+  if (subs.length > 5) {
+    warnings.push({
+      level: "warning",
+      message: `Naplánováno ${subs.length} střídání – do hry smí jen 5 hráčů z lavičky.`,
+    });
+  }
+  const inSeen = new Set<string>();
+  const outSeen = new Set<string>();
+  for (const s of subs) {
+    const inP = byId.get(s.inId);
+    const outP = byId.get(s.outId);
+    if (s.inId && !benchSet.has(s.inId)) {
+      warnings.push({
+        level: "warning",
+        message: `${inP ? fullName(inP) : "Hráč"} má jít na hřiště, ale není na lavičce.`,
+      });
+    }
+    if (s.outId && !onFieldSet.has(s.outId)) {
+      warnings.push({
+        level: "warning",
+        message: `${outP ? fullName(outP) : "Hráč"} má jít střídat ven, ale není v základní sestavě.`,
+      });
+    }
+    if (s.inId && inSeen.has(s.inId)) {
+      warnings.push({
+        level: "warning",
+        message: `${inP ? fullName(inP) : "Hráč"} je v plánu střídání dvakrát.`,
+      });
+    }
+    if (s.outId && outSeen.has(s.outId)) {
+      warnings.push({
+        level: "warning",
+        message: `Za ${outP ? fullName(outP) : "hráče"} se střídá vícekrát.`,
+      });
+    }
+    if (s.inId) inSeen.add(s.inId);
+    if (s.outId) outSeen.add(s.outId);
+  }
+
   // Nedostupní nebo zranění hráči v základní sestavě.
   for (const id of onFieldIds) {
     const p = byId.get(id);

@@ -189,6 +189,9 @@ export function pruneLineup(lineup: Lineup, players: Player[]): Lineup {
   const ids = new Set(players.map((p) => p.id));
   const onField = lineup.onField.filter((f) => ids.has(f.playerId));
   const bench = lineup.bench.filter((b) => ids.has(b));
+  // `subs` může chybět u starších rozpracovaných konceptů z localStorage.
+  const prevSubs = lineup.subs ?? [];
+  const subs = prevSubs.filter((s) => ids.has(s.outId) && ids.has(s.inId));
   const captainId =
     lineup.captainId && ids.has(lineup.captainId) ? lineup.captainId : null;
   const goalkeeperId =
@@ -197,12 +200,14 @@ export function pruneLineup(lineup: Lineup, players: Player[]): Lineup {
       : null;
 
   const unchanged =
+    Array.isArray(lineup.subs) &&
     onField.length === lineup.onField.length &&
     bench.length === lineup.bench.length &&
+    subs.length === prevSubs.length &&
     captainId === lineup.captainId &&
     goalkeeperId === lineup.goalkeeperId;
 
   return unchanged
     ? lineup
-    : { ...lineup, onField, bench, captainId, goalkeeperId };
+    : { ...lineup, onField, bench, subs, captainId, goalkeeperId };
 }

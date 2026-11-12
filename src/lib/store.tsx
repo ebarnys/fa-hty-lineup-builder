@@ -82,6 +82,7 @@ export function newLineup(partial: Partial<Lineup> = {}): Lineup {
     note: "",
     onField: [],
     bench: [],
+    subs: [],
     createdAt: now,
     updatedAt: now,
     ...partial,
@@ -254,6 +255,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         name: `${src.name} (kopie)`,
         onField: src.onField.map((f) => ({ ...f })),
         bench: [...src.bench],
+        subs: src.subs.map((s) => ({ ...s })),
         createdAt: now,
         updatedAt: now,
       };
