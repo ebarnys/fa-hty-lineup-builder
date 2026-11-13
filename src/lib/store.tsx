@@ -16,6 +16,7 @@ import { newId } from "./id";
 import { emptyData, loadData, normalize, saveData } from "./storage";
 import type {
   AppData,
+  Expense,
   FineEntry,
   FineType,
   Lineup,
@@ -51,6 +52,11 @@ interface StoreValue {
   importMatches: (list: Omit<MatchRecord, "createdAt" | "updatedAt">[]) => number;
   /** Doplní hráčům bez ID člena ID podle jména ze zápisů. Vrací počet doplněných. */
   backfillMemberIds: () => number;
+  // Výdaje (transparentní přehled)
+  addExpense: (e: Omit<Expense, "id" | "createdAt" | "updatedAt">) => Expense;
+  updateExpense: (id: string, patch: Partial<Expense>) => void;
+  removeExpense: (id: string) => void;
+  importExpenses: (list: Omit<Expense, "createdAt" | "updatedAt">[]) => number;
   // Přístup
   isAdmin: boolean;
   login: (password: string) => Promise<boolean>;
@@ -386,6 +392,53 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return count;
   }, []);
 
+  // --- Výdaje ---
+  const addExpense = useCallback(
+    (e: Omit<Expense, "id" | "createdAt" | "updatedAt">) => {
+      const now = Date.now();
+      const expense: Expense = {
+        ...e,
+        id: newId("ex"),
+        createdAt: now,
+        updatedAt: now,
+      };
+      setData((d) => ({ ...d, expenses: [...d.expenses, expense] }));
+      return expense;
+    },
+    []
+  );
+
+  const updateExpense = useCallback((id: string, patch: Partial<Expense>) => {
+    setData((d) => ({
+      ...d,
+      expenses: d.expenses.map((e) =>
+        e.id === id ? { ...e, ...patch, updatedAt: Date.now() } : e
+      ),
+    }));
+  }, []);
+
+  const removeExpense = useCallback((id: string) => {
+    setData((d) => ({ ...d, expenses: d.expenses.filter((e) => e.id !== id) }));
+  }, []);
+
+  // Hromadný import (seed). Přeskočí výdaje, jejichž id už existuje. Vrací počet přidaných.
+  const importExpenses = useCallback(
+    (list: Omit<Expense, "createdAt" | "updatedAt">[]) => {
+      let added = 0;
+      setData((d) => {
+        const existing = new Set(d.expenses.map((e) => e.id));
+        const now = Date.now();
+        const toAdd = list
+          .filter((e) => !existing.has(e.id))
+          .map((e) => ({ ...e, createdAt: now, updatedAt: now }));
+        added = toAdd.length;
+        return { ...d, expenses: [...d.expenses, ...toAdd] };
+      });
+      return added;
+    },
+    []
+  );
+
   const login = useCallback(async (password: string) => {
     try {
       const r = await fetch("/api/auth", {
@@ -436,6 +489,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       removeMatch,
       importMatches,
       backfillMemberIds,
+      addExpense,
+      updateExpense,
+      removeExpense,
+      importExpenses,
       isAdmin,
       login,
       logout,
@@ -465,6 +522,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       removeMatch,
       importMatches,
       backfillMemberIds,
+      addExpense,
+      updateExpense,
+      removeExpense,
+      importExpenses,
       isAdmin,
       login,
       logout,

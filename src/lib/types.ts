@@ -145,11 +145,41 @@ export interface MatchRecord {
   updatedAt: number;
 }
 
+/** Jedna položka na dokladu (např. „TEAM dres" 14 ks za 4 900 Kč). */
+export interface ExpenseItem {
+  label: string;
+  /** Počet kusů (nepovinné). */
+  qty: number | null;
+  /** Celková cena položky v Kč (vč. DPH). */
+  total: number;
+}
+
+/** Jeden výdaj / doklad v transparentním přehledu pro tým. */
+export interface Expense {
+  id: string;
+  title: string;
+  /** Kategorie, např. „Oblečení", „Dresy", „Dokopné", „Ostatní". */
+  category: string;
+  /** Dodavatel / komu placeno. */
+  supplier: string;
+  date: string; // YYYY-MM-DD
+  /** Celková částka v Kč (vč. DPH). */
+  amount: number;
+  /** Rozpis položek (nepovinný). */
+  items: ExpenseItem[];
+  /** Odkaz na originální doklad (PDF ve /public nebo externí URL). */
+  pdfUrl: string;
+  note: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface AppData {
   players: Player[];
   lineups: Lineup[];
   fineTypes: FineType[];
   fines: FineEntry[];
   matches: MatchRecord[];
+  expenses: Expense[];
   version: number;
 }

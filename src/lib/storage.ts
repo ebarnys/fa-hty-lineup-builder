@@ -2,6 +2,8 @@ import { createDemoPlayers } from "./demoData";
 import { defaultFineTypes } from "./fines";
 import type {
   AppData,
+  Expense,
+  ExpenseItem,
   FineEntry,
   FineType,
   Lineup,
@@ -22,6 +24,7 @@ export function emptyData(withDemo = true): AppData {
     fineTypes: defaultFineTypes(),
     fines: [],
     matches: [],
+    expenses: [],
     version: CURRENT_VERSION,
   };
 }
@@ -72,7 +75,18 @@ export function normalize(input: Partial<AppData>): AppData {
   const matches: MatchRecord[] = Array.isArray(input.matches)
     ? input.matches.map(sanitizeMatch)
     : [];
-  return { players, lineups, fineTypes, fines, matches, version: CURRENT_VERSION };
+  const expenses: Expense[] = Array.isArray(input.expenses)
+    ? input.expenses.map(sanitizeExpense)
+    : [];
+  return {
+    players,
+    lineups,
+    fineTypes,
+    fines,
+    matches,
+    expenses,
+    version: CURRENT_VERSION,
+  };
 }
 
 function num(v: unknown): number {
@@ -106,6 +120,30 @@ function sanitizeMatch(m: Partial<MatchRecord>): MatchRecord {
       : [],
     createdAt: typeof m.createdAt === "number" ? m.createdAt : Date.now(),
     updatedAt: typeof m.updatedAt === "number" ? m.updatedAt : Date.now(),
+  };
+}
+
+function sanitizeExpenseItem(i: Partial<ExpenseItem>): ExpenseItem {
+  return {
+    label: String(i.label ?? ""),
+    qty: typeof i.qty === "number" ? i.qty : null,
+    total: num(i.total),
+  };
+}
+
+function sanitizeExpense(e: Partial<Expense>): Expense {
+  return {
+    id: String(e.id ?? ""),
+    title: String(e.title ?? "Výdaj"),
+    category: String(e.category ?? "Ostatní"),
+    supplier: String(e.supplier ?? ""),
+    date: String(e.date ?? ""),
+    amount: num(e.amount),
+    items: Array.isArray(e.items) ? e.items.map(sanitizeExpenseItem) : [],
+    pdfUrl: String(e.pdfUrl ?? ""),
+    note: String(e.note ?? ""),
+    createdAt: typeof e.createdAt === "number" ? e.createdAt : Date.now(),
+    updatedAt: typeof e.updatedAt === "number" ? e.updatedAt : Date.now(),
   };
 }
 

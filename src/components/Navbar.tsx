@@ -16,11 +16,13 @@ const ADMIN_LINKS = [
   { href: "/statistiky", label: "Statistiky" },
   { href: "/pokuty", label: "Pokuty" },
   { href: "/sazebnik", label: "Sazebník" },
+  { href: "/vydaje", label: "Výdaje" },
   { href: "/settings", label: "Data" },
 ];
 const PUBLIC_LINKS = [
   { href: "/pokuty", label: "Pokuty" },
   { href: "/sazebnik", label: "Sazebník" },
+  { href: "/vydaje", label: "Výdaje" },
 ];
 
 export function Navbar() {
